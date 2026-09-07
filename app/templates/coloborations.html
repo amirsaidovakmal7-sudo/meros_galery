@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Коллаборации — Meros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Jost:wght@300;400;500;600&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  /* =====================================================================
+     MEROS — Home (Part 1: Hero, About, News, Events)
+     Vanilla HTML/CSS/JS build. Same design system as the React prototype —
+     easy to port back into components later if/when React comes in for
+     richer animation (Framer Motion, scroll-linked transitions, etc).
+     Still to come once this foundation is approved: Shop, Masterclasses,
+     Collaborations, Feedback, Instagram, Contacts/Footer.
+     ===================================================================== */
+
+  html { scroll-behavior: smooth; }
+
+  .meros-root {
+    --flax: #F2EDE4;
+    --flax-deep: #E7DECE;
+    --ink: #1C1A16;
+    --ink-soft: #4A453C;
+    --terracotta: #B4552F;
+    --indigo: #3C4A5E;
+    --olive: #6B6E4E;
+    --brass: #A98A4E;
+    --line: rgba(28,26,22,0.12);
+    --font-display: 'Fraunces', ui-serif, Georgia, serif;
+    --font-sans: 'Jost', ui-sans-serif, system-ui, sans-serif;
+
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    margin: 0;
+    background: var(--flax);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+  }
+
+  .meros-root * { box-sizing: border-box; }
+  .meros-root a { color: inherit; text-decoration: none; }
+  .meros-root button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+  .meros-root p { margin: 0; }
+  .meros-root figure { margin: 0; }
+  .meros-root img { display: block; max-width: 100%; }
+
+  .meros-root a:focus-visible,
+  .meros-root button:focus-visible {
+    outline: 2px solid var(--terracotta);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .meros-root * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* ---------- reveal-on-scroll (JS toggles .is-visible) ---------- */
+
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.9s cubic-bezier(.19,1,.22,1), transform 0.9s cubic-bezier(.19,1,.22,1);
+  }
+  [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
+
+  /* ---------- layout / typography primitives ---------- */
+
+  .section { padding: clamp(64px, 10vw, 140px) clamp(20px, 6vw, 80px); }
+  .section--bg { background: transparent; }
+  .section--bg-deep { background: transparent; }
+
+  .h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin: 0.3em 0 0.6em;
+  }
+
+  .body-lg { font-size: 1.15rem; line-height: 1.6; color: var(--ink-soft); max-width: 46ch; margin: 0 0 1.2em; }
+  .about-point { margin-bottom: 1.5em; }
+  .about-point-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    opacity: 0.7;
+    margin: 0 0 0.4em;
+  }
+  .body { font-size: 1rem; line-height: 1.75; color: var(--ink-soft); max-width: 46ch; margin: 0 0 1.6em; }
+
+  .eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    font-weight: 500;
+    margin-bottom: 0.9em;
+  }
+  .eyebrow--olive { color: var(--olive); }
+  .eyebrow--indigo { color: var(--indigo); }
+
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.92rem;
+    letter-spacing: 0.02em;
+    padding-bottom: 3px;
+    border-bottom: 1px solid currentColor;
+  }
+  .link-arrow::after { content: '→'; transition: transform 0.35s cubic-bezier(.19,1,.22,1); }
+  .link-arrow:hover::after { transform: translateX(4px); }
+  .link-arrow--muted { color: var(--ink-soft); }
+
+  .strip-caption {
+    display: block;
+    margin-top: 12px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+
+  .section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: clamp(32px, 5vw, 56px);
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-head--stack { align-items: flex-start; }
+
+  /* ---------- object framing (rectangles / circles — NOT the arch) ---------- */
+  /* The arch is a background motif now (see .section-arch-bg below), not a
+     crop mask on individual photos — see instructions further down. */
+
+  .card-frame {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--flax-deep);
+  }
+  .card-frame .ph,
+  .card-frame img { transition: transform 1.1s cubic-bezier(.19,1,.22,1); }
+  .card-frame img { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; display: block; }
+  .card-frame:hover .ph,
+  .card-frame:hover img { transform: scale(1.05); }
+
+  .portrait-frame {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 50%;
+    background: var(--flax-deep);
+  }
+  .portrait-frame .ph,
+  .portrait-frame img { transition: transform 1.1s cubic-bezier(.19,1,.22,1); }
+  .portrait-frame img { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; display: block; }
+  .portrait-frame:hover .ph,
+  .portrait-frame:hover img { transform: scale(1.05); }
+
+  /* Rectangle, no crop at all — the whole photo (including any text on it)
+     always stays fully visible. Use for documentary/content photography
+     where losing any part of the image isn't acceptable. */
+  .photo-frame {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 6px;
+    background: var(--flax-deep);
+  }
+  .photo-frame img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    object-fit: contain;
+    display: block;
+    transition: transform 1.1s cubic-bezier(.19,1,.22,1);
+  }
+  .photo-frame:hover img { transform: scale(1.03); }
+
+  /* ---------- photo placeholders (swap for real photography) ---------- */
+
+  .ph { width: 100%; height: 100%; }
+  .ph--warm { background: linear-gradient(155deg, #c9a27a 0%, #a9713f 55%, #5c3a24 100%); }
+  .ph--a { background: linear-gradient(155deg, #9aa07c 0%, #6b6e4e 55%, #3d3f2c 100%); }
+  .ph--b { background: linear-gradient(155deg, #8fa0ab 0%, #3c4a5e 55%, #232c38 100%); }
+  .ph--c { background: linear-gradient(155deg, #caa06a 0%, #a98a4e 55%, #6b5530 100%); }
+  .ph--poster { background: linear-gradient(155deg, #e4dccb 0%, #c9beA6 55%, #a9986f 100%); }
+
+  /* ---------- nav ---------- */
+
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: clamp(18px, 3vw, 32px) clamp(20px, 6vw, 48px);
+    color: #fff;
+    transition: background 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+  }
+  .nav--solid {
+    background: rgba(242,237,228,0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--ink);
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .nav-logo { font-family: var(--font-display); font-size: 1.15rem; letter-spacing: 0.16em; font-weight: 500; }
+  .nav-menu-btn {
+    background: var(--ink);
+    color: #fff;
+    padding: 0.75em 1.5em;
+    font-size: 0.76rem;
+    letter-spacing: 0.16em;
+  }
+
+  .nav-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: var(--ink);
+    color: var(--flax);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(24px, 6vw, 80px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+  .nav-overlay.is-open { opacity: 1; pointer-events: auto; }
+  .nav-overlay-close {
+    position: absolute;
+    top: clamp(18px, 3vw, 32px);
+    right: clamp(20px, 6vw, 48px);
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .nav-overlay-close .x { font-size: 1.1rem; }
+  .nav-overlay-links { display: flex; flex-direction: column; gap: 0.3em; }
+  .nav-overlay-links a {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 6vw, 3.4rem);
+    font-weight: 400;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    padding: 0.15em 0;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease, color 0.3s ease;
+  }
+  .nav-overlay.is-open .nav-overlay-links a { opacity: 1; transform: translateY(0); }
+  .nav-overlay-links a:hover { color: var(--terracotta); }
+  .nav-overlay-index { font-family: var(--font-sans); font-size: 0.9rem; color: var(--brass); opacity: 0.8; }
+  .nav-overlay-footer {
+    position: absolute;
+    bottom: clamp(24px, 4vw, 48px);
+    left: clamp(20px, 6vw, 48px);
+    right: clamp(20px, 6vw, 48px);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    opacity: 0.65;
+    letter-spacing: 0.03em;
+  }
+
+  /* nav overlay per-link stagger delays */
+
+
+  .nav-overlay-links a:nth-child(1) { transition-delay: 0.15s; }
+  .nav-overlay-links a:nth-child(2) { transition-delay: 0.20s; }
+  .nav-overlay-links a:nth-child(3) { transition-delay: 0.25s; }
+  .nav-overlay-links a:nth-child(4) { transition-delay: 0.30s; }
+  .nav-overlay-links a:nth-child(5) { transition-delay: 0.35s; }
+  .nav-overlay-links a:nth-child(6) { transition-delay: 0.40s; }
+
+  /* ---------- hero ---------- */
+
+  .hero {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+    min-height: 560px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  .hero-media { position: absolute; inset: 0; }
+  .hero-media-fallback {
+    position: absolute;
+    inset: -4%;
+    background:
+      radial-gradient(120% 90% at 25% 15%, #4a3226 0%, transparent 55%),
+      radial-gradient(140% 100% at 80% 100%, #2c3644 0%, transparent 60%),
+      linear-gradient(160deg, #201c17 0%, #2c2620 45%, #1d2a2c 100%);
+    animation: heroPan 26s ease-in-out infinite alternate;
+  }
+  @keyframes heroPan {
+    from { transform: scale(1.06) translate(0, 0); }
+    to { transform: scale(1.14) translate(-1.5%, -1%); }
+  }
+  .hero-media-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+  .hero-media-video.is-ready { opacity: 1; }
+  .hero-media-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.55) 100%);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    padding: clamp(20px, 6vw, 48px) clamp(20px, 6vw, 48px) clamp(36px, 6vw, 64px);
+    color: #fff;
+  }
+  .hero-kicker { font-size: 0.85rem; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.9; }
+  .hero-content-right { display: flex; align-items: center; gap: 28px; }
+  .hero-scroll {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .hero-scroll-line { width: 1px; height: 34px; background: rgba(255,255,255,0.5); position: relative; overflow: hidden; }
+  .hero-scroll-line::after {
+    content: '';
+    position: absolute;
+    top: -100%; left: 0;
+    width: 100%; height: 100%;
+    background: #fff;
+    animation: scrollLine 2.2s ease-in-out infinite;
+  }
+  @keyframes scrollLine {
+    0% { top: -100%; }
+    60% { top: 100%; }
+    100% { top: 100%; }
+  }
+
+  /* ---------- about ---------- */
+
+  #about { position: relative; overflow: hidden; }
+  .about-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+    align-items: center;
+    margin-bottom: clamp(48px, 8vw, 96px);
+  }
+  @media (min-width: 900px) {
+    .about-grid { grid-template-columns: 0.95fr 1.05fr; gap: 80px; }
+  }
+  .about-media-main { aspect-ratio: 4 / 5; max-width: 480px; margin-left: auto; }
+  .about-portrait { aspect-ratio: 1 / 1; max-width: 340px; margin: 0 auto; }
+  @media (min-width: 900px) { .about-portrait { margin: 0 0 0 auto; } }
+  .about-strip { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .strip-photo-frame { aspect-ratio: 3 / 4; }
+  @media (max-width: 640px) {
+    .about-strip { grid-template-columns: 1fr; max-width: 320px; margin: 0 auto; }
+  }
+
+  /* ---------- news ---------- */
+
+  /* ---------- news / feedback: 3 asymmetric tiles (shared shape) ---------- */
+
+  .news-tiles {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr 1fr;
+    gap: 16px;
+    align-items: end;
+  }
+  @media (max-width: 640px) { .news-tiles { gap: 8px; } }
+  .news-tile { display: block; }
+  .news-tile-frame {
+    position: relative;
+    overflow: hidden;
+    background: var(--flax-deep);
+    aspect-ratio: 3 / 4;
+  }
+  .news-tile:nth-child(2) .news-tile-frame { aspect-ratio: 3 / 5.2; }
+  .news-tile-frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 1.1s cubic-bezier(.19,1,.22,1);
+  }
+  .news-tile:hover .news-tile-frame img { transform: scale(1.05); }
+  .news-tile-title {
+    margin-top: 14px;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.35;
+    transition: color 0.3s ease;
+  }
+  .news-tile:hover .news-tile-title { color: var(--terracotta); }
+  .news-tile-date { margin-top: 4px; font-size: 0.82rem; color: var(--ink-soft); }
+  @media (max-width: 640px) { .news-tile-title { font-size: 0.85rem; } }
+
+  /* ---------- events ---------- */
+
+  /* ---------- shared dark teaser banner (Events&Masterclasses / Collaborations) ---------- */
+
+  .teaser-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 7;
+    min-height: 240px;
+    overflow: hidden;
+    border-radius: 6px;
+  }
+  @media (max-width: 640px) { .teaser-banner { aspect-ratio: 4 / 5; min-height: 320px; } }
+  .teaser-banner-media {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 90% at 25% 15%, #4a3226 0%, transparent 55%),
+      radial-gradient(140% 100% at 80% 100%, #2c3644 0%, transparent 60%),
+      linear-gradient(160deg, #201c17 0%, #2c2620 45%, #1d2a2c 100%);
+    transition: transform 1.2s cubic-bezier(.19,1,.22,1);
+  }
+  .teaser-banner:hover .teaser-banner-media { transform: scale(1.04); }
+  .teaser-banner-cta {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.9em 2em;
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 999px;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .teaser-banner:hover .teaser-banner-cta { background: #fff; color: var(--ink); }
+
+  /* ---------- shop: banner + heading + 12-item carousel, per category ---------- */
+
+  .shop-category-block { margin-bottom: clamp(56px, 8vw, 88px); }
+  .shop-category-block:last-child { margin-bottom: 0; }
+  .shop-category-banner { margin-bottom: 28px; }
+  .shop-category-name {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+    font-weight: 500;
+    text-align: center;
+    margin: 0 0 24px;
+  }
+  .shop-carousel-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+  }
+  .shop-carousel-item { flex: 0 0 auto; width: clamp(120px, 22vw, 180px); scroll-snap-align: start; }
+  .shop-carousel-frame { position: relative; aspect-ratio: 3 / 4; overflow: hidden; background: var(--flax); }
+  .shop-carousel-frame img,
+  .shop-carousel-frame .ph {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 1.1s cubic-bezier(.19,1,.22,1);
+  }
+  .shop-carousel-item:hover .shop-carousel-frame img,
+  .shop-carousel-item:hover .shop-carousel-frame .ph { transform: scale(1.05); }
+  .shop-carousel-name { margin-top: 10px; font-size: 0.88rem; }
+  .shop-carousel-price { margin-top: 2px; font-size: 0.82rem; color: var(--ink-soft); }
+
+  /* ---------- feedback: same asymmetric-tile rhythm as News, dark fill + quote ---------- */
+
+  .feedback-tiles {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr 1fr;
+    gap: 16px;
+    align-items: end;
+  }
+  @media (max-width: 640px) { .feedback-tiles { gap: 8px; } }
+  .feedback-tile {
+    background: var(--ink);
+    color: var(--flax);
+    padding: 22px 16px;
+    aspect-ratio: 3 / 4;
+    display: flex;
+    align-items: flex-end;
+  }
+  .feedback-tile:nth-child(2) { aspect-ratio: 3 / 5.2; }
+  .feedback-tile-quote { font-family: var(--font-display); font-style: italic; font-size: 0.92rem; line-height: 1.45; }
+  @media (min-width: 640px) {
+    .feedback-tile { padding: 28px 22px; }
+    .feedback-tile-quote { font-size: 1.05rem; }
+  }
+
+  /* ---------- instagram ---------- */
+
+  .instagram-head { text-align: center; margin-bottom: clamp(32px, 5vw, 48px); }
+  .instagram-head .eyebrow { justify-content: center; display: flex; }
+  .instagram-head p { color: var(--ink-soft); margin-top: 0.4em; }
+  .instagram-strip {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px 4px 36px;
+  }
+  .instagram-item {
+    position: relative;
+    flex: 0 0 auto;
+    width: clamp(110px, 13vw, 200px);
+    margin-left: clamp(-32px, -3.4vw, -16px);
+    text-decoration: none;
+  }
+  .instagram-item:first-child { margin-left: 0; }
+  .instagram-item:nth-child(2n) { margin-top: 42px; }
+  .instagram-item:hover { z-index: 5; }
+  .instagram-item-frame {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 16px 34px rgba(28,26,22,0.16);
+    transition: transform 0.4s cubic-bezier(.19,1,.22,1);
+  }
+  .instagram-item:hover .instagram-item-frame { transform: translateY(-8px) scale(1.03); }
+  .instagram-badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .instagram-meta {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+  @media (max-width: 700px) {
+    .instagram-strip { justify-content: flex-start; overflow-x: auto; padding: 16px 4px 28px; }
+    .instagram-item { width: 150px; margin-left: 14px; }
+    .instagram-item:first-child { margin-left: 4px; }
+    .instagram-item:nth-child(2n) { margin-top: 30px; }
+  }
+
+  /* ---------- footer / contacts ---------- */
+
+  .footer { background: var(--ink); color: var(--flax); padding: clamp(56px, 8vw, 96px) clamp(20px, 6vw, 80px) clamp(28px, 4vw, 40px); }
+  .footer-top { display: grid; grid-template-columns: 1fr; gap: 48px; margin-bottom: 56px; }
+  @media (min-width: 800px) { .footer-top { grid-template-columns: 1.2fr 1fr 1fr; } }
+  .footer-brand { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.1em; margin-bottom: 16px; }
+  .footer-tagline { color: rgba(242,237,228,0.65); max-width: 32ch; line-height: 1.6; }
+  .footer-col h4 {
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 16px;
+  }
+  .footer-col a, .footer-col p {
+    display: block;
+    color: rgba(242,237,228,0.85);
+    font-size: 0.92rem;
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .footer-col a:hover { color: var(--terracotta); }
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(242,237,228,0.15);
+    font-size: 0.8rem;
+    color: rgba(242,237,228,0.5);
+  }
+  /* ================= Collaborations page — page-specific components ================= */
+
+  /* ---------- editorial collaboration profiles (alternating) ---------- */
+  .collab-case-list { display: flex; flex-direction: column; }
+  .collab-case {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    padding: 56px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .collab-case:first-child { padding-top: 0; }
+  .collab-case:last-child { border-bottom: none; }
+  @media (min-width: 860px) {
+    .collab-case { flex-direction: row; align-items: center; gap: 64px; }
+    .collab-case--flip { flex-direction: row-reverse; }
+  }
+  .collab-case-media { flex: 1 1 42%; min-width: 0; }
+  .collab-case-body { flex: 1 1 54%; min-width: 0; }
+  .collab-case-frame { aspect-ratio: 3 / 4; max-width: 420px; }
+  .collab-case-name { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 500; margin: 0 0 0.2em; }
+  .collab-case-role { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--indigo); margin: 0 0 1em; }
+  .collab-case-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin: 1.3em 0 0.5em;
+  }
+  .collab-case-project { aspect-ratio: 16 / 10; max-width: 360px; margin-top: 22px; }
+
+  /* ---------- featured partner banners ---------- */
+  .partner-banner-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+  }
+  .partner-banner-frame { aspect-ratio: 16 / 10; }
+  /* ---------- book the gallery: form ---------- */
+  .event-form {
+    max-width: 760px;
+    background: var(--flax);
+    padding: clamp(28px, 5vw, 52px);
+    border-radius: 8px;
+  }
+  .form-row { display: grid; grid-template-columns: 1fr; gap: 26px 32px; margin-bottom: 26px; }
+  @media (min-width: 640px) { .form-row { grid-template-columns: 1fr 1fr; } }
+  .form-field { display: flex; flex-direction: column; gap: 9px; }
+  .form-field--full { margin-bottom: 32px; }
+  .form-label { font-size: 0.74rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-soft); }
+
+  .event-form input,
+  .event-form select,
+  .event-form textarea {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: block;
+    width: 100%;
+    font-family: var(--font-sans);
+    font-size: 0.98rem;
+    color: var(--ink);
+    background: var(--flax-deep);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 12px 14px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+  .event-form input:hover,
+  .event-form select:hover,
+  .event-form textarea:hover { background: #e3d9c6; }
+  .event-form input:focus,
+  .event-form select:focus,
+  .event-form textarea:focus { background: var(--flax); border-color: var(--terracotta); }
+  .event-form textarea { resize: vertical; min-height: 100px; font-family: var(--font-sans); }
+
+  .event-form select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%234A453C' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+  .event-form input[type="date"] { cursor: pointer; }
+  .event-form input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.55;
+    cursor: pointer;
+    filter: invert(20%) sepia(15%) saturate(500%) hue-rotate(360deg);
+  }
+
+  .form-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    margin-top: 8px;
+    background: var(--ink);
+    color: var(--flax);
+    border: none;
+    border-radius: 4px;
+    padding: 1em 2.4em;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+  .form-submit:hover { background: var(--terracotta); transform: translateY(-1px); }
+  a.form-submit, button.form-submit { color: var(--flax); }
+  a.form-submit:hover, button.form-submit:hover { color: var(--flax); }
+  .form-submit:active { transform: translateY(0); }
+  @media (max-width: 480px) { .form-submit { width: 100%; justify-content: center; } }
+</style>
+</head>
+<body class="meros-root">
+
+  <!-- subtle sitewide grain overlay -->
+  <div aria-hidden="true" class="grain" style="
+      position:fixed; inset:0; z-index:40; pointer-events:none; opacity:0.055; mix-blend-mode:multiply;
+      background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27140%27 height=%27140%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.85%27 numOctaves=%272%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27/%3E%3C/svg%3E');
+    "></div>
+
+  <!-- ============================= NAV ============================= -->
+  <header class="nav" id="siteNav">
+    <a href="/" class="nav-logo">MEROS</a>
+    <button class="nav-menu-btn" id="menuBtn" aria-expanded="false" aria-controls="site-menu-overlay" aria-label="Открыть меню">
+      <span>MENU</span>
+    </button>
+  </header>
+
+  <div id="site-menu-overlay" class="nav-overlay" aria-hidden="true">
+    <button class="nav-overlay-close" id="menuCloseBtn" aria-label="Закрыть меню">
+      Закрыть <span class="x">×</span>
+    </button>
+    <nav class="nav-overlay-links">
+      <a href="/"><span class="nav-overlay-index">01</span>Главная</a>
+      <a href="/about"><span class="nav-overlay-index">02</span>О нас</a>
+      <a href="/events"><span class="nav-overlay-index">03</span>Ивенты</a>
+      <a href="/shop"><span class="nav-overlay-index">04</span>Магазин</a>
+      <a href="/collaborations"><span class="nav-overlay-index">05</span>Коллаборации</a>
+      <a href="/news"><span class="nav-overlay-index">06</span>Новости</a>
+    </nav>
+    <div class="nav-overlay-footer">
+      <span>Ташкент, Узбекистан</span>
+      <span>info@meros.uz</span>
+    </div>
+  </div>
+
+  <main>
+    <!-- ============================= HERO ============================= -->
+    <section id="home" class="hero">
+      <div class="hero-media" aria-hidden="true">
+        <div class="hero-media-fallback"></div>
+        <div class="hero-media-scrim"></div>
+      </div>
+      <div class="hero-content">
+        <p class="hero-kicker">Meros · Коллаборации</p>
+        <div class="hero-content-right">
+          <button class="hero-scroll" id="heroScrollBtn">
+            <span>Смотреть</span>
+            <span class="hero-scroll-line"></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= INTRO ============================= -->
+    <section id="intro" class="section section--bg" style="padding-bottom:0;">
+      <div class="section-head section-head--stack" data-reveal>
+        <div class="eyebrow eyebrow--indigo">Коллаборации</div>
+        <h2 class="h2">Люди, которые создают то, что мы показываем</h2>
+        <p class="body-lg" style="margin-top:0.8em; max-width:60ch;">
+          Художники, дизайнеры и бренды, с которыми Meros работает над совместными проектами —
+          от капсульных коллекций до выставок и инсталляций.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================= COLLABORATIONS LIST ============================= -->
+    <section id="collaborations" class="section section--bg">
+      <div class="collab-case-list">
+        {% for p in partners %}
+        <div class="collab-case{% cycle '' ' collab-case--flip' %}" data-reveal>
+          <div class="collab-case-media">
+            <div class="card-frame collab-case-frame"><img src="{{ p.portrait.url }}" alt="{{ p.name }}"></div>
+          </div>
+          <div class="collab-case-body">
+            <h3 class="collab-case-name">{{ p.name }}</h3>
+            <p class="collab-case-role">{{ p.profession }}</p>
+            <p class="body">{{ p.bio }}</p>
+
+            <p class="collab-case-label">Our collaboration</p>
+            <p class="body">{{ p.desc }}</p>
+
+            {% if p.project_photo %}
+            <div class="card-frame collab-case-project"><img src="{{ p.project_photo.url }}" alt="Проект с {{ p.name }}"></div>
+            {% endif %}
+
+            <a href="/coloborations/{{ p.id }}" class="link-arrow" style="margin-top:20px;">Смотреть профиль</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- ============================= GALLERY PARTNERSHIPS ============================= -->
+    <section id="partnerships" class="section section--bg-deep">
+      <div class="section-head section-head--stack">
+        <div data-reveal>
+          <div class="eyebrow">Gallery Partnerships</div>
+          <h2 class="h2">Реклама и партнёрства в галерее</h2>
+          <p class="body-lg" style="margin-top:0.6em; max-width:60ch;">
+            Другие галереи, бренды, культурные проекты и организации могут разместить своё объявление
+            в пространстве Meros или на сайте.
+          </p>
+        </div>
+      </div>
+
+      <div class="directions-list">
+        <a href="#inquire" class="direction-row" data-reveal>
+          <span class="direction-index">01</span>
+          <span class="direction-title">Digital Banner</span>
+          <span class="direction-desc">Размещение рекламного баннера на сайте</span>
+          <span class="direction-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="#inquire" class="direction-row" data-reveal style="transition-delay:0.05s">
+          <span class="direction-index">02</span>
+          <span class="direction-title">Event Promotion</span>
+          <span class="direction-desc">Продвижение мероприятия другой галереи или организации</span>
+          <span class="direction-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="#inquire" class="direction-row" data-reveal style="transition-delay:0.1s">
+          <span class="direction-index">03</span>
+          <span class="direction-title">Gallery Feature</span>
+          <span class="direction-desc">Отдельный editorial-блок о другой галерее, художнике или проекте</span>
+          <span class="direction-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="#inquire" class="direction-row" data-reveal style="transition-delay:0.15s">
+          <span class="direction-index">04</span>
+          <span class="direction-title">Partner Spotlight</span>
+          <span class="direction-desc">Выделенное размещение партнёра на странице Коллабораций</span>
+          <span class="direction-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="#inquire" class="direction-row" data-reveal style="transition-delay:0.2s">
+          <span class="direction-index">05</span>
+          <span class="direction-title">Social + Website</span>
+          <span class="direction-desc">Комбинированное размещение на сайте и в социальных сетях</span>
+          <span class="direction-arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      {% if banners %}
+      <div class="section-head section-head--stack" style="margin-top:56px;">
+        <div data-reveal>
+          <h3 class="shop-category-name" style="text-align:left;">Featured Partners</h3>
+        </div>
+      </div>
+      <div class="partner-banner-row" data-reveal>
+        {% for b in banners %}
+        <a href="{{ b.link|default:'#' }}" class="partner-banner-item" target="_blank" rel="noopener">
+          <div class="card-frame partner-banner-frame"><img src="{{ b.banner.url }}" alt="Партнёр галереи"></div>
+        </a>
+        {% endfor %}
+      </div>
+      <!-- TODO(backend): у Advertisement_banner всё ещё нет полей даты начала/окончания —
+           баннеры показываются всегда, скрыть по расписанию нельзя. Ссылка уже подключена. -->
+      {% endif %}
+    </section>
+
+    <!-- ============================= WANT TO COLLABORATE ============================= -->
+    <section id="inquire" class="section section--bg">
+      <div class="section-head section-head--stack">
+        <div data-reveal>
+          <div class="eyebrow">Advertise / Partner with us</div>
+          <h2 class="h2">Хотите сотрудничать с нами?</h2>
+        </div>
+      </div>
+
+      <!-- TODO(backend): нужна Django-форма + view с обработкой POST и {% csrf_token %}.
+           Сейчас это только разметка/стили, отправка никуда не подключена. -->
+      <form class="event-form" data-reveal method="post" action="#">
+        <div class="form-row">
+          <label class="form-field">
+            <span class="form-label">Имя / организация</span>
+            <input type="text" name="org_name" required />
+          </label>
+          <label class="form-field">
+            <span class="form-label">Контактное лицо</span>
+            <input type="text" name="contact_person" />
+          </label>
+        </div>
+        <div class="form-row">
+          <label class="form-field">
+            <span class="form-label">Email</span>
+            <input type="email" name="email" required />
+          </label>
+          <label class="form-field">
+            <span class="form-label">Телефон</span>
+            <input type="tel" name="phone" />
+          </label>
+        </div>
+        <div class="form-row">
+          <label class="form-field">
+            <span class="form-label">Тип сотрудничества</span>
+            <select name="collab_type">
+              <option>Коллаборация (артист / бренд)</option>
+              <option>Digital Banner</option>
+              <option>Event Promotion</option>
+              <option>Gallery Feature</option>
+              <option>Partner Spotlight</option>
+              <option>Social + Website</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span class="form-label">Предпочитаемое размещение</span>
+            <input type="text" name="placement" />
+          </label>
+        </div>
+        <div class="form-row">
+          <label class="form-field">
+            <span class="form-label">Кампания / мероприятие</span>
+            <input type="text" name="campaign" />
+          </label>
+          <label class="form-field">
+            <span class="form-label">Даты</span>
+            <input type="text" name="dates" placeholder="напр. 01-15 сентября" />
+          </label>
+        </div>
+        <label class="form-field form-field--full">
+          <span class="form-label">Дополнительная информация</span>
+          <textarea name="message" rows="4"></textarea>
+        </label>
+        <button type="submit" class="form-submit">Отправить заявку</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- ============================= CONTACTS / FOOTER ============================= -->
+  <!-- Тестовые данные — адрес, телефон и соцсети нужно заменить на настоящие. -->
+  <footer id="contacts" class="footer">
+    <div class="footer-top">
+      <div data-reveal>
+        <p class="footer-brand">MEROS</p>
+        <p class="footer-tagline">Галерея наследия и современного узбекского ремесла. Ташкент.</p>
+      </div>
+      <div class="footer-col" data-reveal style="transition-delay:0.08s">
+        <h4>Навигация</h4>
+        <a href="/events">Ивенты</a>
+        <a href="/shop">Магазин</a>
+        <a href="/collaborations">Коллаборации</a>
+      </div>
+      <div class="footer-col" data-reveal style="transition-delay:0.16s">
+        <h4>Контакты</h4>
+        <p>ул. Сайилгох, 12, Ташкент</p>
+        <a href="tel:+998710000000">+998 71 000 00 00</a>
+        <a href="mailto:info@meros.uz">info@meros.uz</a>
+        <p>Ежедневно 10:00–20:00</p>
+        <a href="#" target="_blank" rel="noopener">Instagram</a>
+        <a href="#" target="_blank" rel="noopener">Telegram</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Meros. Все права защищены.</span>
+      <span>Дизайн и разработка — [ваша студия]</span>
+    </div>
+  </footer>
+
+<script>
+(function () {
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- nav solid state on scroll ---------- */
+  var nav = document.getElementById('siteNav');
+  function onNavScroll() {
+    if (window.scrollY > 30) nav.classList.add('nav--solid');
+    else nav.classList.remove('nav--solid');
+  }
+  onNavScroll();
+  window.addEventListener('scroll', onNavScroll, { passive: true });
+
+  /* ---------- fullscreen menu overlay ---------- */
+  var menuBtn = document.getElementById('menuBtn');
+  var closeBtn = document.getElementById('menuCloseBtn');
+  var overlay = document.getElementById('site-menu-overlay');
+
+  function openMenu() {
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    menuBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    overlay.classList.remove('is-open');
+    overlay.setAttribute('aria-hidden', 'true');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+  menuBtn.addEventListener('click', openMenu);
+  closeBtn.addEventListener('click', closeMenu);
+  overlay.querySelectorAll('.nav-overlay-links a').forEach(function (a) {
+    a.addEventListener('click', closeMenu);
+  });
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  /* ---------- hero scroll-down button ---------- */
+  var heroScrollBtn = document.getElementById('heroScrollBtn');
+  if (heroScrollBtn) {
+    heroScrollBtn.addEventListener('click', function () {
+      var intro = document.getElementById('intro');
+      if (intro) intro.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  /* ---------- hero video: fade in once it actually has a frame to show ----------
+     Until a real file exists at the <source src>, this never fires and the
+     gradient fallback just stays visible underneath — no broken/black box. */
+  var heroVideo = document.getElementById('heroVideo');
+  if (heroVideo) {
+    heroVideo.addEventListener('loadeddata', function () {
+      heroVideo.classList.add('is-ready');
+    });
+  }
+
+  /* ---------- reveal-on-scroll ---------- */
+  var revealEls = document.querySelectorAll('[data-reveal]');
+  if (prefersReduced) {
+    revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+  } else if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.2, rootMargin: '0px 0px -60px 0px' }
+    );
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+  }
+
+  /* ---------- parallax on [data-parallax="speed"] elements ---------- */
+  if (!prefersReduced) {
+    var parallaxEls = Array.prototype.slice.call(document.querySelectorAll('[data-parallax]'));
+    var raf = null;
+
+    function updateParallax() {
+      var vh = window.innerHeight || 1;
+      parallaxEls.forEach(function (el) {
+        var speed = parseFloat(el.getAttribute('data-parallax')) || 0.1;
+        var rect = el.getBoundingClientRect();
+        var center = rect.top + rect.height / 2 - vh / 2;
+        var offset = center * speed * -1;
+        el.style.transform = 'translateY(' + offset + 'px)';
+      });
+      raf = null;
+    }
+    function onParallaxScroll() {
+      if (!raf) raf = requestAnimationFrame(updateParallax);
+    }
+    updateParallax();
+    window.addEventListener('scroll', onParallaxScroll, { passive: true });
+    window.addEventListener('resize', onParallaxScroll);
+  }
+})();
+</script>
+</body>
+</html>
