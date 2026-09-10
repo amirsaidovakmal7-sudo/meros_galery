@@ -32,7 +32,6 @@ class Masterclasses(models.Model):
     desc = models.TextField('Описание')
     price = models.IntegerField('Цена')
     allowed_amount = models.IntegerField(default=0, verbose_name='Доступно мест')
-    max_allowed = models.IntegerField(default=0, verbose_name='Максимум мест для гостей')
     my_order = models.PositiveIntegerField(
         default=0,
         blank=False,
@@ -75,7 +74,6 @@ class Events(models.Model):
     photo_of_event = models.ImageField(upload_to='media', verbose_name='Фото ивента')
     desc = models.TextField('Описание')
     allowed_amount = models.IntegerField(default=0, verbose_name='Доступно мест')
-    max_allowed = models.IntegerField(default=0, verbose_name='Максимум мест для гостей')
     place_abilities = models.TextField('Возмонжости пространства')
     extra_service = models.TextField(null=True, verbose_name='Доп услуги')
     price = models.IntegerField(verbose_name='Цена за место', default=0)
@@ -112,12 +110,12 @@ class ProductCategory(models.Model):
 
 class Products(models.Model):
     name = models.CharField(max_length=256, verbose_name='Название (Retail Product)')
-    photo1 = models.ImageField(upload_to='media', verbose_name='Фото 1', null=True)
-    photo2 = models.ImageField(upload_to='media', verbose_name='Фото 2', null=True)
-    photo3 = models.ImageField(upload_to='media', verbose_name='Фото 3', null=True)
-    photo4 = models.ImageField(upload_to='media', verbose_name='Фото 4', null=True)
-    photo5 = models.ImageField(upload_to='media', verbose_name='Фото 5', null=True)
-    photo6 = models.ImageField(upload_to='media', verbose_name='Фото 6', null=True)
+    photo1 = models.ImageField(upload_to='media', verbose_name='Фото 1', blank=True, null=True)
+    photo2 = models.ImageField(upload_to='media', verbose_name='Фото 2', blank=True, null=True)
+    photo3 = models.ImageField(upload_to='media', verbose_name='Фото 3', blank=True, null=True)
+    photo4 = models.ImageField(upload_to='media', verbose_name='Фото 4', blank=True, null=True)
+    photo5 = models.ImageField(upload_to='media', verbose_name='Фото 5', blank=True, null=True)
+    photo6 = models.ImageField(upload_to='media', verbose_name='Фото 6', blank=True, null=True)
     price = models.CharField(max_length=128, verbose_name='Цена')
     allowed_amount = models.IntegerField(default=0, verbose_name='Доступно продуктов')
     desc = models.TextField('Описание продукта')

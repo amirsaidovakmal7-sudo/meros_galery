@@ -1061,7 +1061,7 @@
             </div>
             <div class="event-fact">
               <p class="event-fact-label">Мест</p>
-              <p class="event-fact-value">{% if masterclass.place %}{{ masterclass.place }}{% else %}{{ masterclass.max_allowed }}{% endif %}</p>
+              <p class="event-fact-value">{% if masterclass.place %}{{ masterclass.place }}{% else %}{{ masterclass.allowed_amount }}{% endif %}</p>
             </div>
           </div>
 
@@ -1074,7 +1074,7 @@
                 <input type="number" name="user_count" class="qty-input" value="1" min="1" max="{{ masterclass.allowed_amount }}" inputmode="numeric">
                 <button type="button" class="qty-btn qty-plus" aria-label="Увеличить количество">+</button>
               </div>
-              <span class="qty-stock">Доступно: {{ masterclass.allowed_amount }} из {{ masterclass.max_allowed }}</span>
+              <span class="qty-stock">Доступно: {{ masterclass.allowed_amount }}</span>
             </div>
             <button type="submit" class="form-submit product-detail-cta">Добавить в корзину</button>
           </form>
