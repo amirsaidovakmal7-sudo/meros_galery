@@ -1130,29 +1130,47 @@
           {% endif %}
 
           <div class="event-facts">
-            {% if product.product_category.category_name == "Retail" %}
+            {% if product.product_category.category_name == "Art" %}
+              {% if product.author %}<div class="event-fact"><p class="event-fact-label">Автор</p><p class="event-fact-value">{{ product.author }}</p></div>{% endif %}
+              {% if product.year %}<div class="event-fact"><p class="event-fact-label">Год</p><p class="event-fact-value">{{ product.year }}</p></div>{% endif %}
+              {% if product.technique %}<div class="event-fact"><p class="event-fact-label">Техника</p><p class="event-fact-value">{{ product.technique }}</p></div>{% endif %}
+              {% if product.material %}<div class="event-fact"><p class="event-fact-label">Материалы</p><p class="event-fact-value">{{ product.material }}</p></div>{% endif %}
               {% if product.size %}<div class="event-fact"><p class="event-fact-label">Размер</p><p class="event-fact-value">{{ product.size }}</p></div>{% endif %}
-              {% if product.material %}<div class="event-fact"><p class="event-fact-label">Состав</p><p class="event-fact-value">{{ product.material }}</p></div>{% endif %}
+              {% if product.condition %}<div class="event-fact"><p class="event-fact-label">Состояние</p><p class="event-fact-value">{{ product.condition }}</p></div>{% endif %}
+              {% if product.period %}<div class="event-fact"><p class="event-fact-label">Период</p><p class="event-fact-value">{{ product.period }}</p></div>{% endif %}
               {% if product.details %}<div class="event-fact"><p class="event-fact-label">Детали</p><p class="event-fact-value">{{ product.details }}</p></div>{% endif %}
               {% if product.carry %}<div class="event-fact"><p class="event-fact-label">Уход</p><p class="event-fact-value">{{ product.carry }}</p></div>{% endif %}
+              {% if product.status %}<div class="event-fact"><p class="event-fact-label">Тираж</p><p class="event-fact-value">{{ product.status }}</p></div>{% endif %}
             {% elif product.product_category.category_name == "Vintage" %}
               {% if product.period %}<div class="event-fact"><p class="event-fact-label">Период</p><p class="event-fact-value">{{ product.period }}</p></div>{% endif %}
               {% if product.material %}<div class="event-fact"><p class="event-fact-label">Материал</p><p class="event-fact-value">{{ product.material }}</p></div>{% endif %}
               {% if product.size %}<div class="event-fact"><p class="event-fact-label">Размер</p><p class="event-fact-value">{{ product.size }}</p></div>{% endif %}
               {% if product.condition %}<div class="event-fact"><p class="event-fact-label">Состояние</p><p class="event-fact-value">{{ product.condition }}</p></div>{% endif %}
               {% if product.details %}<div class="event-fact"><p class="event-fact-label">Особенности</p><p class="event-fact-value">{{ product.details }}</p></div>{% endif %}
+              {% if product.carry %}<div class="event-fact"><p class="event-fact-label">Уход</p><p class="event-fact-value">{{ product.carry }}</p></div>{% endif %}
+              {% if product.author %}<div class="event-fact"><p class="event-fact-label">Автор</p><p class="event-fact-value">{{ product.author }}</p></div>{% endif %}
+              {% if product.year %}<div class="event-fact"><p class="event-fact-label">Год</p><p class="event-fact-value">{{ product.year }}</p></div>{% endif %}
+              {% if product.technique %}<div class="event-fact"><p class="event-fact-label">Техника</p><p class="event-fact-value">{{ product.technique }}</p></div>{% endif %}
             {% elif product.product_category.category_name == "Secondhand" %}
+              {% if product.period %}<div class="event-fact"><p class="event-fact-label">Период</p><p class="event-fact-value">{{ product.period }}</p></div>{% endif %}
               {% if product.size %}<div class="event-fact"><p class="event-fact-label">Размер</p><p class="event-fact-value">{{ product.size }}</p></div>{% endif %}
               {% if product.material %}<div class="event-fact"><p class="event-fact-label">Состав</p><p class="event-fact-value">{{ product.material }}</p></div>{% endif %}
               {% if product.condition %}<div class="event-fact"><p class="event-fact-label">Состояние</p><p class="event-fact-value">{{ product.condition }}</p></div>{% endif %}
               {% if product.details %}<div class="event-fact"><p class="event-fact-label">Особенности посадки</p><p class="event-fact-value">{{ product.details }}</p></div>{% endif %}
-            {% elif product.product_category.category_name == "Art" %}
+              {% if product.carry %}<div class="event-fact"><p class="event-fact-label">Уход</p><p class="event-fact-value">{{ product.carry }}</p></div>{% endif %}
               {% if product.author %}<div class="event-fact"><p class="event-fact-label">Автор</p><p class="event-fact-value">{{ product.author }}</p></div>{% endif %}
               {% if product.year %}<div class="event-fact"><p class="event-fact-label">Год</p><p class="event-fact-value">{{ product.year }}</p></div>{% endif %}
               {% if product.technique %}<div class="event-fact"><p class="event-fact-label">Техника</p><p class="event-fact-value">{{ product.technique }}</p></div>{% endif %}
-              {% if product.material %}<div class="event-fact"><p class="event-fact-label">Материалы</p><p class="event-fact-value">{{ product.material }}</p></div>{% endif %}
+            {% else %}
               {% if product.size %}<div class="event-fact"><p class="event-fact-label">Размер</p><p class="event-fact-value">{{ product.size }}</p></div>{% endif %}
-              {% if product.status %}<div class="event-fact"><p class="event-fact-label">Тираж</p><p class="event-fact-value">{{ product.status }}</p></div>{% endif %}
+              {% if product.material %}<div class="event-fact"><p class="event-fact-label">Состав</p><p class="event-fact-value">{{ product.material }}</p></div>{% endif %}
+              {% if product.condition %}<div class="event-fact"><p class="event-fact-label">Состояние</p><p class="event-fact-value">{{ product.condition }}</p></div>{% endif %}
+              {% if product.details %}<div class="event-fact"><p class="event-fact-label">Детали</p><p class="event-fact-value">{{ product.details }}</p></div>{% endif %}
+              {% if product.carry %}<div class="event-fact"><p class="event-fact-label">Уход</p><p class="event-fact-value">{{ product.carry }}</p></div>{% endif %}
+              {% if product.period %}<div class="event-fact"><p class="event-fact-label">Период</p><p class="event-fact-value">{{ product.period }}</p></div>{% endif %}
+              {% if product.author %}<div class="event-fact"><p class="event-fact-label">Автор</p><p class="event-fact-value">{{ product.author }}</p></div>{% endif %}
+              {% if product.year %}<div class="event-fact"><p class="event-fact-label">Год</p><p class="event-fact-value">{{ product.year }}</p></div>{% endif %}
+              {% if product.technique %}<div class="event-fact"><p class="event-fact-label">Техника</p><p class="event-fact-value">{{ product.technique }}</p></div>{% endif %}
             {% endif %}
           </div>
 
@@ -1401,7 +1419,18 @@
     form.addEventListener("submit", function (e) {
       e.preventDefault();
 
-      var photoEl = form.closest("section").querySelector("img");
+      var photoEl = null;
+      var track = form.closest("section").querySelector(".story-carousel-track");
+      if (track) {
+        var trackLeft = track.getBoundingClientRect().left;
+        var closestDist = Infinity;
+        track.querySelectorAll(".story-carousel-slide img").forEach(function (img) {
+          var dist = Math.abs(img.getBoundingClientRect().left - trackLeft);
+          if (dist < closestDist) { closestDist = dist; photoEl = img; }
+        });
+      }
+      if (!photoEl) photoEl = form.closest("section").querySelector("img");
+
       if (photoEl && cartLink) {
         var startRect = photoEl.getBoundingClientRect();
         var endRect = cartLink.getBoundingClientRect();
@@ -1412,16 +1441,28 @@
         clone.style.width = startRect.width + "px";
         clone.style.height = startRect.height + "px";
         clone.style.opacity = "1";
+        clone.style.transform = "translate(0px, 0px) scale(1)";
         document.body.appendChild(clone);
 
-        requestAnimationFrame(function () {
-          var dx = endRect.left + endRect.width / 2 - startRect.left - startRect.width / 2;
-          var dy = endRect.top + endRect.height / 2 - startRect.top - startRect.height / 2;
-          clone.style.transform = "translate(" + dx + "px, " + dy + "px) scale(0.04)";
-          clone.style.opacity = "0";
+        var cleanupTimer = setTimeout(function () { clone.remove(); }, 900);
+        clone.addEventListener("transitionend", function () {
+          clearTimeout(cleanupTimer);
+          clone.remove();
         });
 
-        clone.addEventListener("transitionend", function () { clone.remove(); });
+        // Force the browser to commit the starting position/opacity before
+        // changing them, otherwise the two states can get coalesced into a
+        // single frame and the transition never actually plays.
+        void clone.offsetWidth;
+
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            var dx = endRect.left + endRect.width / 2 - startRect.left - startRect.width / 2;
+            var dy = endRect.top + endRect.height / 2 - startRect.top - startRect.height / 2;
+            clone.style.transform = "translate(" + dx + "px, " + dy + "px) scale(0.04)";
+            clone.style.opacity = "0";
+          });
+        });
       }
 
       var qty = input ? clampQty(parseInt(input.value, 10)) : 1;

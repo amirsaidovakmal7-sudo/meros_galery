@@ -101,12 +101,12 @@ def add_to_cart_product(request, pk):
             final_product = user_cart_product.user_amount + user_count
             user_cart_product.user_amount = final_product
             user_cart_product.save()
-            return redirect(f'shop/product/{pk}')
+            return redirect(f'/shop/product/{pk}')
         else:
             if 1 <= user_count <= user_product.allowed_amount:
                 Cart.objects.create(session_key=session_key, user_product=user_product, user_amount=user_count).save()
-                return redirect(f'shop/product/{pk}')
-            return redirect(f'shop/product/{pk}')
+                return redirect(f'/shop/product/{pk}')
+            return redirect(f'/shop/product/{pk}')
     return False
 
 def add_to_cart_event(request, pk):
@@ -119,12 +119,12 @@ def add_to_cart_event(request, pk):
             final_product = user_cart_event.user_amount + user_count
             user_cart_event.user_amount = final_product
             user_cart_event.save()
-            return redirect(f'events/{pk}')
+            return redirect(f'/events/{pk}')
         else:
             if 1 <= user_count <= user_event.allowed_amount:
                 Cart.objects.create(session_key=session_key, user_event=user_event, user_amount=user_count).save()
-                return redirect(f'events/{pk}')
-            return redirect(f'events/{pk}')
+                return redirect(f'/events/{pk}')
+            return redirect(f'/events/{pk}')
     return False
 
 def add_to_cart_masterclass(request, pk):
@@ -137,12 +137,12 @@ def add_to_cart_masterclass(request, pk):
             final_amount = user_cart_masterclass.user_amount + user_count
             user_cart_masterclass.user_amount = final_amount
             user_cart_masterclass.save()
-            return redirect(f'shop/masterclass/{pk}')
+            return redirect(f'/events/masterclass/{pk}')
         else:
             if 1 <= user_count <= user_masterclass.allowed_amount:
                 Cart.objects.create(session_key=session_key, user_masterclass=user_masterclass, user_amount=user_count).save()
-                return redirect(f'events/masterclass/{pk}')
-            return redirect(f'events/masterclass/{pk}')
+                return redirect(f'/events/masterclass/{pk}')
+            return redirect(f'/events/masterclass/{pk}')
     return False
 
 

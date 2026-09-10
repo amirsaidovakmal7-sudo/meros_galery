@@ -1255,16 +1255,28 @@
         clone.style.width = startRect.width + "px";
         clone.style.height = startRect.height + "px";
         clone.style.opacity = "1";
+        clone.style.transform = "translate(0px, 0px) scale(1)";
         document.body.appendChild(clone);
 
-        requestAnimationFrame(function () {
-          var dx = endRect.left + endRect.width / 2 - startRect.left - startRect.width / 2;
-          var dy = endRect.top + endRect.height / 2 - startRect.top - startRect.height / 2;
-          clone.style.transform = "translate(" + dx + "px, " + dy + "px) scale(0.04)";
-          clone.style.opacity = "0";
+        var cleanupTimer = setTimeout(function () { clone.remove(); }, 900);
+        clone.addEventListener("transitionend", function () {
+          clearTimeout(cleanupTimer);
+          clone.remove();
         });
 
-        clone.addEventListener("transitionend", function () { clone.remove(); });
+        // Force the browser to commit the starting position/opacity before
+        // changing them, otherwise the two states can get coalesced into a
+        // single frame and the transition never actually plays.
+        void clone.offsetWidth;
+
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            var dx = endRect.left + endRect.width / 2 - startRect.left - startRect.width / 2;
+            var dy = endRect.top + endRect.height / 2 - startRect.top - startRect.height / 2;
+            clone.style.transform = "translate(" + dx + "px, " + dy + "px) scale(0.04)";
+            clone.style.opacity = "0";
+          });
+        });
       }
 
       var qty = input ? clampQty(parseInt(input.value, 10)) : 1;
