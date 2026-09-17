@@ -1,0 +1,853 @@
+/* Final visual pass shared by every MEROS template. */
+.meros-root {
+  --color-bg: #f1ede4;
+  --color-surface: #e6ded0;
+  --color-text: #171714;
+  --color-muted: #625d54;
+  --color-accent: #963f29;
+  --color-cultural: #263d39;
+  --color-border: rgba(23, 23, 20, 0.18);
+  --flax: var(--color-bg);
+  --flax-deep: var(--color-surface);
+  --ink: var(--color-text);
+  --ink-soft: var(--color-muted);
+  --terracotta: var(--color-accent);
+  --indigo: var(--color-cultural);
+  --line: var(--color-border);
+  background: var(--color-bg);
+}
+
+/* A second reveal family for the handful of real typographic moments (hero
+   headlines, the large photo captions on About). Every page currently ships
+   one fade-up ([data-reveal], opacity+translateY) for literally everything —
+   the audit flagged this as the single biggest "AI template" tell. This mask
+   variant is used sparingly, only where a headline earns a moment of its
+   own; it shares the same is-visible toggle so no JS changes are needed. */
+/* Implemented as overflow:hidden on the wrapper + translateY on its
+   children, not clip-path on the target itself — clipping the target
+   element directly gives it zero painted area, and Chromium's
+   IntersectionObserver then reports a permanent 0 intersection ratio for
+   it, so it can never cross the threshold that reveals it. This version
+   keeps the wrapper's own box fully "visible" to the observer and only
+   clips/translates its children. */
+[data-reveal="mask"] { overflow: hidden; }
+[data-reveal="mask"] > * {
+  transform: translateY(105%);
+  transition: transform 1.05s cubic-bezier(.19, 1, .22, 1);
+}
+[data-reveal="mask"].is-visible > * { transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal="mask"] > * { transform: none; transition: none; }
+}
+
+.meros-root .section {
+  padding: clamp(56px, 7.5vw, 112px) clamp(20px, 5vw, 76px);
+}
+
+.meros-root .h2,
+.meros-root .news-page-title,
+.meros-root .news-detail-title {
+  text-wrap: balance;
+}
+
+.meros-root main,
+.meros-root .section,
+.meros-root .section-head,
+.meros-root .section-head > *,
+.meros-root .hero-content,
+.meros-root .hero-title-wrap,
+.meros-root .hero-tagline { min-width: 0; max-width: 100%; }
+
+.meros-root .story-carousel,
+.meros-root .shop-carousel,
+.meros-root .spotlight-carousel { overflow: hidden; }
+
+.meros-root .nav {
+  padding-block: clamp(16px, 2.2vw, 26px);
+}
+
+.meros-root.page--light-nav .nav:not(.nav--solid) {
+  background: rgba(241, 237, 228, .94);
+  color: var(--color-text);
+  box-shadow: 0 1px 0 var(--color-border);
+}
+
+.meros-root .nav-logo,
+.meros-root .footer-brand {
+  font-family: var(--font-display);
+  font-style: italic;
+  text-transform: lowercase;
+  letter-spacing: -0.045em;
+}
+
+.meros-root .nav-logo { font-size: clamp(1.55rem, 2.3vw, 2rem); }
+.meros-root .nav-menu-btn { min-width: 48px; min-height: 48px; }
+
+/* The requested compact right-side menu. */
+.meros-root .nav-overlay {
+  inset: 0 0 0 auto;
+  width: min(430px, 100%);
+  justify-content: flex-start;
+  padding: 104px clamp(28px, 5vw, 54px) 36px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border-left: 1px solid var(--color-border);
+  box-shadow: -24px 0 70px rgba(23, 23, 20, 0.16);
+  opacity: 1;
+  visibility: hidden;
+  transform: translateX(102%);
+  transition: transform .55s cubic-bezier(.19, 1, .22, 1), visibility 0s linear .55s;
+}
+
+.meros-root .nav-overlay.is-open {
+  visibility: visible;
+  transform: translateX(0);
+  transition-delay: 0s;
+}
+
+.meros-root .nav-overlay-close { color: var(--color-text); }
+.meros-root .nav-overlay-links { gap: 0; }
+.meros-root .nav-overlay-links a {
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  border-bottom: 1px solid var(--color-border);
+  padding: .48em 0;
+}
+.meros-root .nav-overlay-index { min-width: 2.1em; font-size: .66rem; }
+.meros-root .nav-overlay-footer {
+  position: static;
+  margin-top: auto;
+  padding-top: 28px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+}
+
+.meros-preferences {
+  display: flex;
+  gap: 22px;
+  margin-top: 28px;
+  padding-top: 22px;
+}
+.meros-preferences label {
+  display: grid;
+  gap: 7px;
+  min-width: 112px;
+  color: var(--color-muted);
+  font-size: .66rem;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.meros-preferences select {
+  width: 100%;
+  padding: 8px 24px 8px 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-text);
+  border-radius: 0;
+  color: var(--color-text);
+  background: transparent;
+  font: 500 .82rem var(--font-sans);
+}
+
+.meros-root .hero-scroll > span:first-child { display: none; }
+.meros-root .hero-scroll { min-width: 48px; min-height: 48px; justify-content: flex-end; }
+.meros-root .hero-scroll-line { width: 1px; height: 64px; }
+
+.meros-root .story-carousel-btn {
+  background: rgba(255,255,255,.96);
+  color: var(--color-text);
+  border: 1px solid rgba(255,255,255,.8);
+}
+
+.meros-root .story-carousel-btn:hover {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+/* Home: a compact four-way directory, derived from real shop categories. */
+.shop-directory {
+  padding: clamp(46px, 6vw, 88px) clamp(20px, 5vw, 76px);
+  border-block: 1px solid var(--color-border);
+}
+.shop-directory-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: clamp(28px, 4vw, 52px);
+}
+.shop-directory-title {
+  margin: 0;
+  font: 400 clamp(2.2rem, 5vw, 5rem)/.95 var(--font-display);
+}
+.shop-directory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--color-border);
+}
+.shop-directory-link {
+  min-height: 190px;
+  padding: 22px;
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: background .35s ease, color .35s ease;
+}
+.shop-directory-link:last-child { border-right: 0; }
+.shop-directory-link::before { content: attr(data-index); font-size: .7rem; letter-spacing: .14em; }
+.shop-directory-link span { font: 400 clamp(1.45rem, 2.5vw, 2.35rem)/1 var(--font-display); }
+.shop-directory-link::after { content: '\2197'; align-self: end; font-size: 1.25rem; }
+.shop-directory-link:hover { background: var(--color-cultural); color: var(--color-bg); }
+
+/* About: tighter editorial rhythm and a distinct founder chapter.
+   One rule owns spacing for the whole narrative sequence — this used to be
+   declared twice (here and further down) with two different clamp values,
+   which is exactly the kind of accumulated override the redesign audit
+   flagged. Single source now, tightened per client feedback (pravki.pdf). */
+.meros-root #intro,
+.meros-root #story,
+.meros-root #concept,
+.meros-root #philosophy,
+.meros-root #vision,
+.meros-root #what-we-do,
+.meros-root #community { padding-block: clamp(38px, 5vw, 68px); }
+.meros-root #story { padding-top: 0; }
+.meros-root #founder {
+  margin: clamp(18px, 2.4vw, 36px) clamp(12px, 3vw, 46px) 0;
+  padding-inline: clamp(20px, 4vw, 60px);
+  background: var(--color-cultural);
+  color: var(--color-bg);
+}
+.meros-root #founder .body,
+.meros-root #founder .body-lg { color: rgba(241,237,228,.78); }
+
+.space-editorial { padding-top: clamp(60px, 8vw, 120px); }
+.space-editorial-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(250px, .7fr);
+  gap: clamp(28px, 6vw, 96px);
+  align-items: end;
+  margin-bottom: clamp(38px, 6vw, 84px);
+}
+.space-editorial-list { display: grid; gap: clamp(52px, 8vw, 120px); }
+.space-editorial-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(240px, .6fr);
+  gap: clamp(24px, 5vw, 76px);
+  align-items: end;
+}
+.space-editorial-item:nth-child(even) { grid-template-columns: minmax(240px, .6fr) minmax(0, 1.65fr); }
+.space-editorial-item:nth-child(even) .space-editorial-media { order: 2; }
+.space-editorial-media {
+  aspect-ratio: 16/9;
+  min-height: 300px;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+.space-editorial-media img { width: 100%; height: 100%; object-fit: cover; }
+.space-editorial-copy h3 { margin: 0 0 14px; font: 400 clamp(2rem, 4vw, 4rem)/1 var(--font-display); }
+
+/* Denser editorial news grid; the title lives on the image. */
+.meros-root .news-card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(34px, 4vw, 64px) clamp(18px, 2.2vw, 34px); }
+.meros-root .news-card { position: relative; }
+.meros-root .news-card-frame { aspect-ratio: 4/5; position: relative; }
+.meros-root .news-card-frame,
+.meros-root .news-card-frame img { border-radius: 0; }
+.meros-root .news-card-frame::after {
+  content: '';
+  position: absolute;
+  inset: 45% 0 0;
+  background: linear-gradient(transparent, rgba(0,0,0,.78));
+  pointer-events: none;
+}
+.meros-root .news-card-title {
+  position: absolute;
+  z-index: 2;
+  left: 18px;
+  right: 18px;
+  bottom: 56px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1.8vw, 1.65rem);
+  font-weight: 400;
+}
+.meros-root .news-card:hover .news-card-title { color: #fff; }
+.meros-root .news-card-excerpt { margin-top: 14px; }
+
+/* Catalogue cards keep only name and price. */
+.meros-root .shop-carousel-status,
+.meros-root .vintage-card-status,
+.meros-root .art-card-status { display: none; }
+.meros-root .shop-carousel-frame,
+.meros-root .vintage-card-frame { border-radius: 0; }
+.meros-root .vintage-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.meros-root .vintage-card,
+.meros-root .art-card { min-width: 0; }
+
+.meros-root .product-detail-price { margin-bottom: clamp(32px, 4vw, 58px); }
+.meros-root .event-detail .event-facts { display: none; }
+
+.events-page .content-arch-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(300px, .7fr);
+  align-items: start;
+}
+.events-page #intro { grid-column: 1 / -1; }
+.events-page #catalog { grid-column: 1; }
+.events-page #book {
+  grid-column: 2;
+  position: sticky;
+  top: 72px;
+  padding-left: clamp(28px, 4vw, 64px);
+  border-left: 1px solid var(--color-border);
+}
+.events-page #book .section-head { margin-bottom: 22px; }
+.events-page #book .form-row { grid-template-columns: 1fr; }
+.events-page .story-columns--single {
+  display: block;
+  max-width: 72ch;
+}
+.events-page .story-columns--single .body { max-width: 72ch; }
+
+.meros-root .qty-soldout,
+.meros-root .sold-out-title {
+  color: var(--color-accent);
+  font-family: var(--font-display);
+}
+
+/* Footer remains a deliberate dark closing field with complete navigation. */
+.meros-root .footer { background: #171714; color: var(--color-bg); }
+.meros-root .footer-col h4 { color: rgba(241,237,228,.55); }
+.meros-root .footer-col a,
+.meros-root .footer-col p { color: rgba(241,237,228,.82); }
+
+@media (max-width: 900px) {
+  .shop-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .shop-directory-link:nth-child(2) { border-right: 0; }
+  .shop-directory-link:nth-child(-n+2) { border-bottom: 1px solid var(--color-border); }
+  .meros-root .news-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .meros-root .vintage-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .space-editorial-head { grid-template-columns: 1fr; }
+  .space-editorial-item,
+  .space-editorial-item:nth-child(even) { grid-template-columns: 1fr; gap: 22px; }
+  .space-editorial-item:nth-child(even) .space-editorial-media { order: 0; }
+  .events-page .content-arch-wrap { display: block; }
+  .events-page #book { position: static; border-left: 0; border-top: 1px solid var(--color-border); }
+}
+
+@media (max-width: 600px) {
+  .meros-root .section { padding: 52px 18px; }
+  .meros-root .hero { min-height: 540px; }
+  .meros-root .hero-title { white-space: normal; overflow-wrap: anywhere; font-size: clamp(2.7rem, 13vw, 4.6rem); }
+  .meros-root .nav-overlay { width: min(360px, 92vw); padding: 88px 24px 28px; }
+  .meros-root .nav-overlay-links a { font-size: 1.42rem; }
+  .meros-root .nav-overlay-footer { flex-direction: column; gap: 6px; }
+  .meros-preferences { gap: 14px; }
+  .meros-preferences label { min-width: 0; flex: 1; }
+  .shop-directory { padding: 46px 18px; }
+  .shop-directory-head { align-items: start; flex-direction: column; }
+  .shop-directory-link { min-height: 145px; padding: 16px; }
+  .meros-root .news-card-grid { grid-template-columns: 1fr; gap: 38px; }
+  .meros-root .news-card-frame { aspect-ratio: 4/4.6; }
+  .meros-root .vintage-grid { grid-template-columns: 1fr 1fr; gap: 34px 12px; }
+  .space-editorial-item,
+  .space-editorial-item:nth-child(even) { grid-template-columns: 1fr; gap: 20px; }
+  .space-editorial-item:nth-child(even) .space-editorial-media { order: 0; }
+  .space-editorial-media { min-height: 0; aspect-ratio: 4/3; }
+  .meros-root #founder { margin-inline: 0; }
+}
+
+@media (max-width: 350px) {
+  .shop-directory-grid { grid-template-columns: 1fr; }
+  .shop-directory-link { border-right: 0; border-bottom: 1px solid var(--color-border); }
+  .meros-root .vintage-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meros-root .nav-overlay { transition: none; }
+}
+
+/* About — photography and type are composed as one editorial surface. */
+.about-photo-chapter {
+  --photo-ink: #f5f2ea;
+  position: relative;
+}
+
+.about-photo {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+  border-radius: 0;
+  background: #d8d0c3;
+}
+
+.about-photo > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.about-photo-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.about-photo-heading {
+  position: absolute;
+  z-index: 1;
+  color: var(--photo-ink);
+}
+
+.about-photo-heading h2 {
+  margin: 0;
+  max-width: 12ch;
+  font: 400 clamp(3rem, 7.2vw, 7.8rem)/.84 var(--font-display);
+  letter-spacing: -.055em;
+  text-wrap: balance;
+}
+
+.about-photo-index {
+  display: block;
+  margin-bottom: clamp(12px, 1.7vw, 24px);
+  font: 500 .69rem/1.2 var(--font-sans);
+  letter-spacing: .17em;
+  text-transform: uppercase;
+}
+
+.about-photo--history { aspect-ratio: 16 / 9; }
+.about-photo--history > img { object-position: 50% 52%; }
+.about-photo--history .about-photo-scrim {
+  background: linear-gradient(18deg, rgba(231,222,206,.9) 0%, rgba(231,222,206,.4) 24%, transparent 52%);
+}
+.about-photo--history .about-photo-heading {
+  left: clamp(22px, 4.5vw, 72px);
+  bottom: clamp(22px, 4vw, 62px);
+  color: #211d18;
+}
+
+.about-photo--concept {
+  width: 88%;
+  margin-left: auto;
+  aspect-ratio: 16 / 9;
+}
+.about-photo--concept > img { object-position: 54% 50%; }
+.about-photo--concept .about-photo-scrim {
+  background: linear-gradient(135deg, rgba(4,17,44,.72) 0%, rgba(4,17,44,.22) 31%, transparent 58%);
+}
+.about-photo--concept .about-photo-heading {
+  top: clamp(24px, 4vw, 58px);
+  left: clamp(22px, 4vw, 58px);
+}
+.about-photo--concept .about-photo-heading h2 { max-width: 9ch; }
+
+.meros-root #philosophy { padding-inline: 0; }
+.meros-root #philosophy .story-columns { padding-inline: clamp(20px, 6vw, 80px); }
+.about-photo--philosophy { min-height: 560px; aspect-ratio: 16 / 7.5; }
+.about-photo--philosophy > img { object-position: 46% 52%; }
+.about-photo--philosophy .about-photo-scrim {
+  background: linear-gradient(300deg, rgba(16,4,27,.72) 0%, rgba(16,4,27,.14) 36%, transparent 61%);
+}
+.about-photo--philosophy .about-photo-heading {
+  right: clamp(24px, 6vw, 94px);
+  bottom: clamp(28px, 6vw, 86px);
+  text-align: right;
+}
+.about-photo--philosophy .about-photo-heading h2 { max-width: 8ch; }
+
+/* Founder intentionally has no stand-in photograph. Emphasised as its own
+   dark chapter, but pulled close to the quote that follows it — the client
+   asked for these two specifically to read as one connected moment. */
+.meros-root #founder.founder-editorial {
+  margin-top: clamp(8px, 1.4vw, 20px);
+  padding-block: clamp(52px, 6.5vw, 88px);
+  background: #263d39;
+}
+.founder-editorial-head {
+  display: grid;
+  grid-template-columns: minmax(110px, .36fr) minmax(0, 1.3fr) minmax(210px, .55fr);
+  gap: clamp(24px, 4vw, 68px);
+  align-items: end;
+  padding-bottom: clamp(42px, 6vw, 82px);
+  border-bottom: 1px solid rgba(241,237,228,.35);
+}
+.founder-editorial-kicker,
+.founder-editorial-role {
+  margin: 0;
+  color: rgba(241,237,228,.7);
+  font-size: .72rem;
+  line-height: 1.7;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.founder-editorial-head h2 {
+  margin: 0;
+  color: #f1ede4;
+  font: 400 clamp(3.5rem, 8vw, 8.4rem)/.77 var(--font-display);
+  letter-spacing: -.06em;
+}
+.founder-editorial-head h2 em { font-weight: 300; }
+.founder-editorial-role { justify-self: end; }
+.founder-editorial-copy { margin-top: clamp(34px, 5vw, 68px); }
+
+/* No location photography exists yet: spacing, rules and type carry the chapter. */
+.space-editorial--no-media .space-editorial-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--color-border);
+}
+.space-editorial--no-media .space-editorial-item,
+.space-editorial--no-media .space-editorial-item:nth-child(even) {
+  display: block;
+  min-height: clamp(260px, 25vw, 390px);
+  padding: clamp(24px, 3vw, 44px);
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+.space-editorial--no-media .space-editorial-item:nth-child(3n) { border-right: 0; }
+.space-editorial--no-media .space-editorial-copy {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.space-editorial--no-media .space-editorial-copy .eyebrow { margin-bottom: auto; }
+.space-editorial--no-media .space-editorial-copy h3 {
+  margin-top: clamp(70px, 9vw, 130px);
+  font-size: clamp(2rem, 3.6vw, 4.2rem);
+  letter-spacing: -.04em;
+}
+.space-editorial--no-media .space-editorial-copy .body { max-width: 32ch; }
+
+.meros-root #vision.quote-editorial { padding: 0; }
+.about-photo--quote { min-height: 680px; aspect-ratio: 16 / 9; }
+.about-photo--quote > img { object-position: 50% 50%; }
+.about-photo--quote .about-photo-scrim {
+  background: radial-gradient(ellipse 72% 78% at 14% 5%, rgba(242,237,228,.92) 0%, rgba(242,237,228,.68) 38%, transparent 73%);
+}
+.quote-editorial-copy {
+  position: absolute;
+  z-index: 1;
+  top: clamp(28px, 5vw, 78px);
+  left: clamp(22px, 5vw, 78px);
+  width: min(48%, 690px);
+  color: #171714;
+}
+.quote-editorial-copy blockquote {
+  margin: 0;
+  font: 400 clamp(1.8rem, 3.25vw, 4rem)/1.03 var(--font-display);
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+.quote-editorial-copy cite {
+  display: block;
+  margin-top: clamp(18px, 2.5vw, 34px);
+  font: 500 .72rem/1.2 var(--font-sans);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.about-photo--directions {
+  width: 92%;
+  aspect-ratio: 16 / 9;
+}
+.about-photo--directions > img { object-position: 49% 50%; }
+.about-photo--directions .about-photo-scrim {
+  background: linear-gradient(112deg, rgba(0,35,38,.76) 0%, rgba(0,35,38,.18) 29%, transparent 53%);
+}
+.about-photo--directions .about-photo-heading {
+  top: clamp(28px, 5vw, 76px);
+  left: clamp(22px, 4vw, 62px);
+}
+.about-photo--directions .about-photo-heading h2 {
+  max-width: 10ch;
+  font-size: clamp(2.8rem, 6.5vw, 7rem);
+}
+
+.about-photo--community {
+  width: 87%;
+  margin-left: auto;
+  aspect-ratio: 16 / 9;
+}
+.about-photo--community > img { object-position: 50% 52%; }
+.about-photo--community .about-photo-scrim {
+  background: linear-gradient(325deg, rgba(229,222,209,.88) 0%, rgba(229,222,209,.28) 31%, transparent 55%);
+}
+.about-photo--community .about-photo-heading {
+  right: clamp(22px, 4vw, 62px);
+  bottom: clamp(22px, 4vw, 58px);
+  color: #201d19;
+  text-align: right;
+}
+
+@media (max-width: 700px) {
+  .meros-root #story,
+  .meros-root #concept,
+  .meros-root #philosophy,
+  .meros-root #what-we-do,
+  .meros-root #community { padding: 42px 18px 54px; }
+  .meros-root #story { padding-top: 0; }
+  .meros-root #philosophy .story-columns { padding-inline: 0; }
+
+  .about-photo,
+  .about-photo--concept,
+  .about-photo--directions,
+  .about-photo--community {
+    width: 100%;
+    min-height: 0;
+    margin-inline: 0;
+    aspect-ratio: 4 / 5;
+  }
+  .about-photo-heading h2 { font-size: clamp(2.65rem, 13vw, 4.65rem); }
+  .about-photo--history > img { object-position: 49% center; }
+  .about-photo--concept > img { object-position: 58% center; }
+  .about-photo--philosophy > img { object-position: 43% center; }
+  .about-photo--directions > img { object-position: 47% center; }
+  .about-photo--community > img { object-position: 51% center; }
+
+  .about-photo--history .about-photo-scrim {
+    background: linear-gradient(20deg, rgba(231,222,206,.94), rgba(231,222,206,.28) 42%, transparent 64%);
+  }
+  .about-photo--concept .about-photo-scrim {
+    background: linear-gradient(145deg, rgba(4,17,44,.82), rgba(4,17,44,.16) 52%, transparent 72%);
+  }
+  .about-photo--philosophy .about-photo-scrim {
+    background: linear-gradient(315deg, rgba(16,4,27,.78), rgba(16,4,27,.08) 58%, transparent 74%);
+  }
+  .about-photo--directions .about-photo-scrim {
+    background: linear-gradient(125deg, rgba(0,35,38,.82), rgba(0,35,38,.08) 54%, transparent 72%);
+  }
+  .about-photo--community .about-photo-scrim {
+    background: linear-gradient(330deg, rgba(229,222,209,.92), rgba(229,222,209,.14) 49%, transparent 70%);
+  }
+
+  .founder-editorial-head { grid-template-columns: 1fr; gap: 24px; }
+  .founder-editorial-head h2 { font-size: clamp(3.2rem, 18vw, 5.2rem); }
+  .founder-editorial-role { justify-self: start; }
+
+  .space-editorial--no-media .space-editorial-list { grid-template-columns: 1fr; }
+  .space-editorial--no-media .space-editorial-item,
+  .space-editorial--no-media .space-editorial-item:nth-child(even) {
+    min-height: 0;
+    padding: 24px 0 30px;
+    border-right: 0;
+  }
+  .space-editorial--no-media .space-editorial-copy h3 { margin-top: 42px; }
+
+  .meros-root #vision.quote-editorial { padding: 0 18px 54px; }
+  .about-photo--quote { min-height: 0; aspect-ratio: 4 / 5.4; }
+  .about-photo--quote > img { object-position: 43% center; }
+  .about-photo--quote .about-photo-scrim {
+    background: linear-gradient(180deg, rgba(242,237,228,.94) 0%, rgba(242,237,228,.72) 32%, transparent 64%);
+  }
+  .quote-editorial-copy {
+    top: 22px;
+    left: 20px;
+    right: 20px;
+    width: auto;
+  }
+  .quote-editorial-copy blockquote { font-size: clamp(1.45rem, 7.2vw, 2.05rem); line-height: 1.02; }
+}
+
+@media (max-width: 350px) {
+  .about-photo-heading h2 { font-size: 2.55rem; }
+  .about-photo-index { margin-bottom: 9px; font-size: .61rem; }
+  .quote-editorial-copy blockquote { font-size: 1.35rem; }
+  .quote-editorial-copy cite { margin-top: 14px; font-size: .62rem; }
+}
+
+/* --------------------------------------------------------------------------
+   Shared finishing layer: contrast, consistent media and restrained motion.
+   Kept here so every standalone Django template receives the same treatment.
+   -------------------------------------------------------------------------- */
+
+.meros-root {
+  --color-ochre: #b7863f;
+  --ease-editorial: cubic-bezier(.19, 1, .22, 1);
+}
+
+/* The closing page links must stay readable on their coloured fields. */
+.meros-root .cta-split {
+  position: relative;
+  isolation: isolate;
+  background: var(--color-cultural);
+}
+
+.meros-root .cta-option,
+.meros-root .cta-option:visited {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: #fffaf0;
+  background: var(--color-cultural);
+  transition: opacity .9s var(--ease-editorial), color .35s ease, transform .55s var(--ease-editorial);
+}
+
+.meros-root .cta-option:nth-child(even) { background: var(--color-accent); }
+
+.meros-root .cta-option::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: var(--color-ochre);
+  transform: translateY(101%);
+  transition: transform .6s var(--ease-editorial);
+}
+
+.meros-root .cta-option:hover,
+.meros-root .cta-option:focus-visible {
+  color: #171714;
+  transform: translateY(-2px);
+}
+
+.meros-root .cta-option:hover::before,
+.meros-root .cta-option:focus-visible::before { transform: translateY(0); }
+
+.meros-root .cta-option-label {
+  color: rgba(255, 250, 240, .9);
+  opacity: 1;
+}
+
+.meros-root .cta-option:hover .cta-option-label,
+.meros-root .cta-option:focus-visible .cta-option-label { color: rgba(23, 23, 20, .68); }
+
+.meros-root .cta-option-title { color: inherit; }
+.meros-root .cta-option-title [aria-hidden='true'] {
+  display: inline-block;
+  transition: transform .4s var(--ease-editorial);
+}
+.meros-root .cta-option:hover .cta-option-title [aria-hidden='true'] { transform: translateX(10px); }
+
+/* One reliable media geometry prevents database images from changing card width. */
+.meros-root :is(
+  .news-card-frame,
+  .vintage-card-frame,
+  .art-card-mat,
+  .art-card-frame,
+  .shop-carousel-frame,
+  .event-case-frame,
+  .masterclass-card-frame,
+  .collab-case-frame,
+  .collab-case-project,
+  .partner-banner-frame,
+  .news-detail-photo,
+  .cart-row-image,
+  .photo-frame,
+  .card-frame
+) {
+  width: 100%;
+  min-width: 0;
+}
+
+.meros-root :is(
+  .news-card-frame,
+  .vintage-card-frame,
+  .art-card-frame,
+  .shop-carousel-frame,
+  .event-case-frame,
+  .masterclass-card-frame,
+  .collab-case-frame,
+  .collab-case-project,
+  .partner-banner-frame,
+  .news-detail-photo,
+  .cart-row-image,
+  .photo-frame,
+  .card-frame
+) > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+/* Two distinct hover families instead of one lift-and-zoom applied
+   everywhere. Shop/vintage are commerce — a lift plus a quick zoom reads as
+   "pick this up". News and Art are editorial — the object stays still, only
+   the image breathes very slightly, because it's a photograph or an
+   artwork, not a product you're browsing to buy. */
+.meros-root :is(.news-card, .vintage-card, .art-card) { width: 100%; }
+
+.meros-root :is(.vintage-card, .shop-carousel-item) {
+  transition: transform .5s var(--ease-editorial), box-shadow .5s var(--ease-editorial);
+}
+.meros-root :is(.vintage-card, .shop-carousel-item):hover { transform: translateY(-7px); }
+
+.meros-root :is(.news-card-frame, .vintage-card-frame, .art-card-frame, .shop-carousel-frame) {
+  overflow: hidden;
+}
+
+.meros-root :is(.vintage-card-frame, .shop-carousel-frame) img {
+  transition: transform .9s var(--ease-editorial), filter .6s ease;
+}
+.meros-root :is(.vintage-card, .shop-carousel-item):hover img {
+  transform: scale(1.045);
+  filter: saturate(1.08);
+}
+
+.meros-root :is(.news-card-frame, .art-card-frame) img {
+  transition: transform 1.6s var(--ease-editorial);
+}
+.meros-root :is(.news-card, .art-card):hover :is(.news-card-frame, .art-card-frame) img {
+  transform: scale(1.02);
+}
+
+/* A quiet, static system mark — not an animation that fires on every single
+   section as the page scrolls. One accent colour, no gradient, no keyframe:
+   the repeated multi-hue reveal here was one of the clearest "AI premium
+   template" tells in the audit (same motion, same decoration, every time). */
+.meros-root .section-head { position: relative; }
+.meros-root .section-head::before {
+  content: '';
+  display: block;
+  width: clamp(32px, 4vw, 54px);
+  height: 2px;
+  margin-bottom: clamp(16px, 2vw, 24px);
+  background: var(--color-accent);
+}
+
+.meros-root .eyebrow,
+.meros-root .event-fact-label { color: var(--color-accent); }
+
+.meros-root .tag {
+  background: var(--color-cultural);
+  color: #fffaf0;
+}
+
+.meros-root .section--bg-deep { background-color: var(--color-surface); }
+
+.meros-root .link-arrow,
+.meros-root .direction-arrow { transition: color .3s ease, transform .35s var(--ease-editorial); }
+.meros-root .link-arrow:hover { color: var(--color-accent); }
+.meros-root .direction-row:hover .direction-arrow { transform: translateX(8px); }
+
+.meros-root .form-submit {
+  background: var(--color-cultural);
+  color: #fffaf0;
+  box-shadow: 0 10px 30px rgba(38, 61, 57, .16);
+}
+.meros-root .form-submit:hover { background: var(--color-accent); transform: translateY(-2px); }
+
+/* A quiet, deliberately plain closing field: no glow, no rainbow seam.
+   Restraint here is the point — the interface stays quiet, the art (and the
+   photography above it) is what gets to carry colour. */
+.meros-root .footer-col a { transition: color .25s ease, transform .25s ease; }
+.meros-root .footer-col a:hover { color: #e0b86d; transform: translateX(4px); }
+
+@media (max-width: 600px) {
+  .meros-root :is(.news-card, .vintage-card, .art-card, .shop-carousel-item):hover { transform: none; }
+  .meros-root .cta-option { min-height: 190px; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meros-root .cta-option,
+  .meros-root .cta-option::before,
+  .meros-root :is(.news-card, .vintage-card, .art-card, .shop-carousel-item),
+  .meros-root :is(.news-card-frame, .vintage-card-frame, .art-card-frame, .shop-carousel-frame) img {
+    transition: none;
+  }
+}

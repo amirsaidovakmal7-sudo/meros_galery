@@ -10,9 +10,10 @@ def home_page(request):
     news = News.objects.all()
     product_categories = ProductCategory.objects.all()
     products = Products.objects.all()
+    events = Events.objects.all()
     masterclasses = Masterclasses.objects.all()
     feedbacks = Feedbacks.objects.all()
-    context = {'news': news, 'categories': product_categories, 'products': products, 'masterclasses': masterclasses, 'feedbacks': feedbacks}
+    context = {'news': news, 'categories': product_categories, 'products': products, 'events': events, 'masterclasses': masterclasses, 'feedbacks': feedbacks}
     return render(request, 'home.html', context)
 
 
@@ -45,10 +46,13 @@ def news(request):
     return render(request, 'news.html', context)
 
 
+def collaborations_page(request):
+    return render(request, 'coloborations.html', {})
+
+
 
 def exact_new(request, pk):
     new = News.objects.get(id=pk)
-    print(exact_new)
     context = {'new': new}
     return render(request, 'new.html', context)
 
@@ -96,7 +100,6 @@ def add_to_cart_product(request, pk):
         user_count = int(request.POST.get('user_count'))
         user_product = Products.objects.get(id=pk)
         user_cart_product = Cart.objects.filter(session_key=session_key, user_product=user_product).first()
-        print(user_cart_product)
         if user_cart_product:
             final_product = user_cart_product.user_amount + user_count
             user_cart_product.user_amount = final_product

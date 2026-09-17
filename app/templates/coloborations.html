@@ -13,9 +13,7 @@
 <style>
   /* =====================================================================
      MEROS — Home (Part 1: Hero, About, News, Events)
-     Vanilla HTML/CSS/JS build. Same design system as the React prototype —
-     easy to port back into components later if/when React comes in for
-     richer animation (Framer Motion, scroll-linked transitions, etc).
+     Vanilla HTML/CSS/JS implementation.
      Still to come once this foundation is approved: Shop, Masterclasses,
      Collaborations, Feedback, Instagram, Contacts/Footer.
      ===================================================================== */
@@ -740,6 +738,7 @@
   .form-submit:active { transform: translateY(0); }
   @media (max-width: 480px) { .form-submit { width: 100%; justify-content: center; } }
 </style>
+<link rel="stylesheet" href="/static/css/meros-polish.css" />
 </head>
 <body class="meros-root">
 
@@ -751,7 +750,7 @@
 
   <!-- ============================= NAV ============================= -->
   <header class="nav" id="siteNav">
-    <a href="/" class="nav-logo">MEROS</a>
+    <a href="/" class="nav-logo">merós</a>
     <button class="nav-menu-btn" id="menuBtn" aria-expanded="false" aria-controls="site-menu-overlay" aria-label="Открыть меню">
       <span>MENU</span>
     </button>
@@ -1098,5 +1097,6 @@
   }
 })();
 </script>
+<script src="/static/js/meros-polish.js" defer></script>
 </body>
 </html>

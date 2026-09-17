@@ -7,6 +7,7 @@ urlpatterns = [
     path('events', views.events_page),
     path('shop', views.shop_page),
     path('news', views.news),
+    path('collaborations', views.collaborations_page),
     path('news/<int:pk>', views.exact_new),
     path('shop/product/<int:pk>', views.product_page),
     path('events/<int:pk>', views.event_page),
@@ -23,4 +24,3 @@ urlpatterns = [
 
 
 ]
-
