@@ -706,6 +706,7 @@
       <a href="/events"><span class="nav-overlay-index">03</span>Ивенты</a>
       <a href="/shop"><span class="nav-overlay-index">04</span>Магазин</a>
       <a href="/news"><span class="nav-overlay-index">05</span>Новости</a>
+      <a href="#contacts"><span class="nav-overlay-index">06</span>Контакты</a>
     </nav>
     <div class="nav-overlay-footer">
       <span>Ташкент, Узбекистан</span>
@@ -717,7 +718,7 @@
     <!-- ============================= HERO ============================= -->
     <section id="home" class="hero hero--about">
       <div class="hero-media" aria-hidden="true">
-        <div class="hero-media-fallback"></div>
+        <img class="hero-media-photo" src="/static/media/comunity.webp" alt="" style="object-position:50% 45%" />
         <div class="hero-media-scrim"></div>
       </div>
 
@@ -729,8 +730,7 @@
       <div class="hero-content">
         <p class="hero-kicker">Meros · Магазин</p>
         <div class="hero-content-right">
-          <button class="hero-scroll" id="heroScrollBtn">
-            <span>Смотреть коллекцию</span>
+          <button class="hero-scroll" id="heroScrollBtn" aria-label="Прокрутить вниз">
             <span class="hero-scroll-line"></span>
           </button>
         </div>
@@ -760,9 +760,7 @@
       <div class="shop-category-block" id="{{ c.category_name|slugify }}" data-reveal>
         <a href="/shop/category/{{ c.id }}" class="teaser-banner shop-category-banner">
           <div class="teaser-banner-media">
-            {% with cover=c.products_set.first %}
-            {% if cover.photo1 %}<img src="{{ cover.photo1.url }}" alt="">{% endif %}
-            {% endwith %}
+            <img src="{{ c.cover_url }}" alt="" loading="lazy">
           </div>
           <div class="teaser-banner-content">
             <p class="teaser-banner-headline">
@@ -799,8 +797,8 @@
           {% endif %}
         </div>
 
-        <div class="shop-carousel">
-          <div class="shop-carousel-track">
+        <div class="shop-carousel" data-rail>
+          <div class="shop-carousel-track" data-rail-track>
             {% for p in c.products_set.all %}
             <a href="/shop/product/{{ p.id }}" class="shop-carousel-item">
               <div class="shop-carousel-frame">
@@ -816,6 +814,10 @@
               <span class="link-arrow shop-carousel-link">Подробнее</span>
             </a>
             {% endfor %}
+          </div>
+          <div class="rail-pager rail-pager--compact" style="justify-content:flex-end">
+            <button type="button" class="rail-btn" data-rail-prev aria-label="Назад">&larr;</button>
+            <button type="button" class="rail-btn" data-rail-next aria-label="Вперёд">&rarr;</button>
           </div>
         </div>
       </div>
@@ -834,8 +836,12 @@
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.08s">
         <h4>Навигация</h4>
+        <a href="/">Главная</a>
+        <a href="/about">О нас</a>
         <a href="/events">Ивенты</a>
         <a href="/shop">Магазин</a>
+        <a href="/news">Новости</a>
+        <a href="#contacts">Контакты</a>
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.16s">
         <h4>Контакты</h4>

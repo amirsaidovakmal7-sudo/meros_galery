@@ -53,6 +53,8 @@ class Masterclasses(models.Model):
 
 class Feedbacks(models.Model):
     text = models.TextField('Текст отзыва')
+    author_name = models.CharField('Имя автора отзыва', max_length=128, blank=True)
+    author_role = models.CharField('Род деятельности автора', max_length=128, blank=True)
     my_order = models.PositiveIntegerField(
         default=0,
         blank=False,
@@ -62,7 +64,7 @@ class Feedbacks(models.Model):
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-        ordering = ['text', 'my_order']
+        ordering = ['my_order']
 
     def __str__(self):
         return self.text
@@ -94,6 +96,13 @@ class Events(models.Model):
 
 class ProductCategory(models.Model):
     category_name = models.CharField(max_length=128, verbose_name='Название категории')
+    cover_photo = models.ImageField(
+        upload_to='media',
+        blank=True,
+        null=True,
+        verbose_name='Фото-баннер категории',
+        help_text='Если не загружено — на сайте показывается фото галереи по умолчанию',
+    )
     my_order = models.PositiveIntegerField(
         default=0,
         blank=False,
@@ -103,6 +112,20 @@ class ProductCategory(models.Model):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
         ordering = ['my_order']
+
+    DEFAULT_COVERS = {
+        'retail': '/static/media/quote.jpg',
+        'vintage': '/static/media/about-hero.jpg',
+        'secondhand': '/static/media/comunity.jpg',
+        'art': '/static/media/direction.webp',
+    }
+
+    @property
+    def cover_url(self):
+        if self.cover_photo:
+            return self.cover_photo.url
+        key = self.category_name.replace(' ', '').lower()
+        return self.DEFAULT_COVERS.get(key, '/static/media/comunity.webp')
 
     def __str__(self):
         return self.category_name

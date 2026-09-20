@@ -1026,17 +1026,9 @@
   .qty-stock { font-size: 0.82rem; color: var(--ink-soft); }
   .qty-soldout { font-size: 0.9rem; color: var(--terracotta); margin-bottom: 16px; }
 
-  .fly-to-cart-clone {
-    position: fixed;
-    z-index: 200;
-    pointer-events: none;
-    border-radius: 4px;
-    object-fit: cover;
-    transition: transform 0.7s cubic-bezier(.5,-0.2,.7,1), opacity 0.7s ease 0.15s;
-    will-change: transform, opacity;
-  }
 </style>
 <link rel="stylesheet" href="/static/css/meros-polish.css" />
+<link rel="stylesheet" href="/static/css/meros-cart.css" />
 </head>
 <body class="meros-root">
 
@@ -1070,6 +1062,7 @@
       <a href="/events"><span class="nav-overlay-index">03</span>Ивенты</a>
       <a href="/shop"><span class="nav-overlay-index">04</span>Магазин</a>
       <a href="/news"><span class="nav-overlay-index">05</span>Новости</a>
+      <a href="#contacts"><span class="nav-overlay-index">06</span>Контакты</a>
     </nav>
     <div class="nav-overlay-footer">
       <span>Ташкент, Узбекистан</span>
@@ -1081,14 +1074,13 @@
     <!-- ============================= HERO ============================= -->
     <section id="home" class="hero">
       <div class="hero-media" aria-hidden="true">
-        <div class="hero-media-fallback"></div>
+        <img class="hero-media-photo" src="/static/media/comunity.webp" alt="" style="object-position:50% 45%" />
         <div class="hero-media-scrim"></div>
       </div>
       <div class="hero-content">
         <p class="hero-kicker">Meros · Магазин</p>
         <div class="hero-content-right">
-          <button class="hero-scroll" id="heroScrollBtn">
-            <span>Смотреть</span>
+          <button class="hero-scroll" id="heroScrollBtn" aria-label="Прокрутить вниз">
             <span class="hero-scroll-line"></span>
           </button>
         </div>
@@ -1164,8 +1156,12 @@
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.08s">
         <h4>Навигация</h4>
+        <a href="/">Главная</a>
+        <a href="/about">О нас</a>
         <a href="/events">Ивенты</a>
         <a href="/shop">Магазин</a>
+        <a href="/news">Новости</a>
+        <a href="#contacts">Контакты</a>
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.16s">
         <h4>Контакты</h4>
@@ -1322,120 +1318,6 @@
     });
   });
 
-  /* ---------- add to cart: quantity +/-, fly-to-cart animation, fetch() ----------
-     Пользователь остаётся на странице: отправляем форму через fetch() в фоне,
-     не переходя никуда. Если сервер вернёт JSON с cart_count/count/total —
-     бейдж покажет честное число из корзины; если нет — считаем сами
-     как запасной вариант. */
-  var cartLink = document.getElementById("navCartLink");
-  var cartBadge = document.getElementById("navCartBadge");
-
-  document.querySelectorAll(".add-to-cart-form").forEach(function (form) {
-    var minus = form.querySelector(".qty-minus");
-    var plus = form.querySelector(".qty-plus");
-    var input = form.querySelector(".qty-input");
-
-    function clampQty(v) {
-      var max = parseInt(input.getAttribute("max"), 10) || 1;
-      v = isNaN(v) ? 1 : v;
-      return Math.max(1, Math.min(max, v));
-    }
-    if (minus && input) {
-      minus.addEventListener("click", function () {
-        input.value = clampQty(parseInt(input.value, 10) - 1);
-      });
-    }
-    if (plus && input) {
-      plus.addEventListener("click", function () {
-        input.value = clampQty(parseInt(input.value, 10) + 1);
-      });
-    }
-    if (input) {
-      input.addEventListener("change", function () {
-        input.value = clampQty(parseInt(input.value, 10));
-      });
-    }
-
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      var photoEl = null;
-      var track = form.closest("section").querySelector(".story-carousel-track");
-      if (track) {
-        var trackLeft = track.getBoundingClientRect().left;
-        var closestDist = Infinity;
-        track.querySelectorAll(".story-carousel-slide img").forEach(function (img) {
-          var dist = Math.abs(img.getBoundingClientRect().left - trackLeft);
-          if (dist < closestDist) { closestDist = dist; photoEl = img; }
-        });
-      }
-      if (!photoEl) photoEl = form.closest("section").querySelector("img");
-
-      if (photoEl && cartLink) {
-        var startRect = photoEl.getBoundingClientRect();
-        var endRect = cartLink.getBoundingClientRect();
-        var clone = photoEl.cloneNode(true);
-        clone.className = "fly-to-cart-clone";
-        clone.style.top = startRect.top + "px";
-        clone.style.left = startRect.left + "px";
-        clone.style.width = startRect.width + "px";
-        clone.style.height = startRect.height + "px";
-        clone.style.opacity = "1";
-        clone.style.transform = "translate(0px, 0px) scale(1)";
-        document.body.appendChild(clone);
-
-        var cleanupTimer = setTimeout(function () { clone.remove(); }, 900);
-        clone.addEventListener("transitionend", function () {
-          clearTimeout(cleanupTimer);
-          clone.remove();
-        });
-
-        // Force the browser to commit the starting position/opacity before
-        // changing them, otherwise the two states can get coalesced into a
-        // single frame and the transition never actually plays.
-        void clone.offsetWidth;
-
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            var dx = endRect.left + endRect.width / 2 - startRect.left - startRect.width / 2;
-            var dy = endRect.top + endRect.height / 2 - startRect.top - startRect.height / 2;
-            clone.style.transform = "translate(" + dx + "px, " + dy + "px) scale(0.04)";
-            clone.style.opacity = "0";
-          });
-        });
-      }
-
-      var qty = input ? clampQty(parseInt(input.value, 10)) : 1;
-
-      fetch(form.action, {
-        method: "POST",
-        body: new FormData(form),
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-      })
-        .then(function (response) {
-          if (!response.ok) throw new Error("add_to_cart вернул " + response.status);
-          var contentType = response.headers.get("content-type") || "";
-          return contentType.indexOf("application/json") !== -1 ? response.json() : null;
-        })
-        .then(function (data) {
-          if (!cartBadge) return;
-          var realCount = data && (data.cart_count || data.count || data.total);
-          if (typeof realCount === "number") {
-            cartBadge.textContent = realCount;
-          } else {
-            var current = parseInt(cartBadge.textContent, 10) || 0;
-            cartBadge.textContent = current + qty;
-          }
-          cartBadge.hidden = false;
-          cartBadge.classList.remove("is-bump");
-          void cartBadge.offsetWidth;
-          cartBadge.classList.add("is-bump");
-        })
-        .catch(function (err) {
-          console.error("Не удалось добавить в корзину:", err);
-        });
-    });
-  });
   /* ---------- reveal-on-scroll ---------- */
   var revealEls = document.querySelectorAll('[data-reveal]');
   if (prefersReduced) {
@@ -1482,6 +1364,7 @@
   }
 })();
 </script>
+<script src="/static/js/meros-cart.js" defer></script>
 <script src="/static/js/meros-polish.js" defer></script>
 </body>
 </html>

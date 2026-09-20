@@ -922,6 +922,7 @@
       <a href="/events"><span class="nav-overlay-index">03</span>Ивенты</a>
       <a href="/shop"><span class="nav-overlay-index">04</span>Магазин</a>
       <a href="/news"><span class="nav-overlay-index">05</span>Новости</a>
+      <a href="#contacts"><span class="nav-overlay-index">06</span>Контакты</a>
     </nav>
     <div class="nav-overlay-footer">
       <span>Ташкент, Узбекистан</span>
@@ -944,7 +945,7 @@
 
       <div class="hero-content">
         <div class="hero-content-right">
-          <button class="hero-scroll" id="heroScrollBtn">
+          <button class="hero-scroll" id="heroScrollBtn" aria-label="Прокрутить вниз">
             <span class="hero-scroll-line"></span>
           </button>
         </div>
@@ -1032,34 +1033,97 @@
           </figcaption>
         </figure>
       </section>
-      <section id="space" class="section section--bg space-editorial space-editorial--no-media">
+      <section id="space" class="section section--bg space-photo-head-section">
         <div class="space-editorial-head" data-reveal>
           <div>
             <p class="eyebrow">Пространства Meros</p>
-            <h2 class="h2">Шесть пространств — одна галерея</h2>
+            <h2 class="h2">Courtyard, Retail, Workshop, Lounge, Second Hand, Reception</h2>
           </div>
           <p class="body">Каждая часть Meros имеет собственный ритм: от открытого двора до камерной зоны Second Hand.</p>
         </div>
-
-        <div class="space-editorial-list">
-          <article class="space-editorial-item" data-reveal>
-            <div class="space-editorial-copy"><p class="eyebrow">01</p><h3>Courtyard</h3><p class="body">Внутренний двор, где начинается визит в Meros и проходят открытые встречи.</p></div>
-          </article>
-          <article class="space-editorial-item" data-reveal>
-            <div class="space-editorial-copy"><p class="eyebrow">02</p><h3>Retail</h3><p class="body">Шоурум с одеждой и предметами для современной жизни — от лимитированных капсул до вещей на каждый день.</p></div>
-          </article>
-          <article class="space-editorial-item" data-reveal>
-            <div class="space-editorial-copy"><p class="eyebrow">03</p><h3>Workshop</h3><p class="body">Мастерская для практических занятий, творческих встреч и резиденций мастеров.</p></div>
-          </article>
-          <article class="space-editorial-item" data-reveal>
-            <div class="space-editorial-copy"><p class="eyebrow">04</p><h3>Lounge</h3><p class="body">Гостиная для встреч, неспешных разговоров и знакомства с искусством.</p></div>
-          </article>
-          <article class="space-editorial-item" data-reveal>
-            <div class="space-editorial-copy"><p class="eyebrow">05</p><h3>Second Hand</h3><p class="body">Камерная коллекция отобранных вещей, в которых время становится частью ценности.</p></div>
-          </article>
-          <article class="space-editorial-item" data-reveal>
-            <div class="space-editorial-copy"><p class="eyebrow">06</p><h3>Reception</h3><p class="body">Первая точка знакомства с галереей и её текущей программой.</p></div>
-          </article>
+      </section>
+      <!-- TODO: заменить фото на реальное фото пространства «Courtyard» -->
+      <section id="space-courtyard" class="section section--bg space-photo-chapter">
+        <figure class="about-photo about-photo--space" data-reveal>
+          <img src="/static/media/comunity.jpg" alt="Courtyard" loading="lazy" />
+          <span class="about-photo-scrim" aria-hidden="true"></span>
+          <figcaption class="about-photo-heading">
+            <span class="about-photo-index">01 / Пространство</span>
+            <h2>Courtyard</h2>
+          </figcaption>
+        </figure>
+        <div class="story-columns" data-reveal style="transition-delay:0.1s">
+          <p class="body">Внутренний двор, где начинается визит в Meros и проходят открытые встречи.</p>
+        </div>
+      </section>
+      <!-- TODO: заменить фото на реальное фото пространства «Retail» -->
+      <section id="space-retail" class="section section--bg space-photo-chapter">
+        <figure class="about-photo about-photo--space about-photo--space-end" data-reveal>
+          <img src="/static/media/quote.jpg" alt="Retail" loading="lazy" />
+          <span class="about-photo-scrim" aria-hidden="true"></span>
+          <figcaption class="about-photo-heading">
+            <span class="about-photo-index">02 / Пространство</span>
+            <h2>Retail</h2>
+          </figcaption>
+        </figure>
+        <div class="story-columns" data-reveal style="transition-delay:0.1s">
+          <p class="body">Шоурум с одеждой и предметами для современной жизни — от лимитированных капсул до вещей на каждый день.</p>
+        </div>
+      </section>
+      <!-- TODO: заменить фото на реальное фото пространства «Workshop» -->
+      <section id="space-workshop" class="section section--bg space-photo-chapter">
+        <figure class="about-photo about-photo--space" data-reveal>
+          <img src="/static/media/direction.webp" alt="Workshop" loading="lazy" />
+          <span class="about-photo-scrim" aria-hidden="true"></span>
+          <figcaption class="about-photo-heading">
+            <span class="about-photo-index">03 / Пространство</span>
+            <h2>Workshop</h2>
+          </figcaption>
+        </figure>
+        <div class="story-columns" data-reveal style="transition-delay:0.1s">
+          <p class="body">Мастерская для практических занятий, творческих встреч и резиденций мастеров.</p>
+        </div>
+      </section>
+      <!-- TODO: заменить фото на реальное фото пространства «Lounge» -->
+      <section id="space-lounge" class="section section--bg space-photo-chapter">
+        <figure class="about-photo about-photo--space about-photo--space-end" data-reveal>
+          <img src="/static/media/about-hero.jpg" alt="Lounge" loading="lazy" />
+          <span class="about-photo-scrim" aria-hidden="true"></span>
+          <figcaption class="about-photo-heading">
+            <span class="about-photo-index">04 / Пространство</span>
+            <h2>Lounge</h2>
+          </figcaption>
+        </figure>
+        <div class="story-columns" data-reveal style="transition-delay:0.1s">
+          <p class="body">Гостиная для встреч, неспешных разговоров и знакомства с искусством.</p>
+        </div>
+      </section>
+      <!-- TODO: заменить фото на реальное фото пространства «Second Hand» -->
+      <section id="space-second-hand" class="section section--bg space-photo-chapter">
+        <figure class="about-photo about-photo--space" data-reveal>
+          <img src="/static/media/ourhistory.jpg" alt="Second Hand" loading="lazy" />
+          <span class="about-photo-scrim" aria-hidden="true"></span>
+          <figcaption class="about-photo-heading">
+            <span class="about-photo-index">05 / Пространство</span>
+            <h2>Second Hand</h2>
+          </figcaption>
+        </figure>
+        <div class="story-columns" data-reveal style="transition-delay:0.1s">
+          <p class="body">Камерная коллекция отобранных вещей, в которых время становится частью ценности.</p>
+        </div>
+      </section>
+      <!-- TODO: заменить фото на реальное фото пространства «Reception» -->
+      <section id="space-reception" class="section section--bg space-photo-chapter">
+        <figure class="about-photo about-photo--space about-photo--space-end" data-reveal>
+          <img src="/static/media/comunity.webp" alt="Reception" loading="lazy" />
+          <span class="about-photo-scrim" aria-hidden="true"></span>
+          <figcaption class="about-photo-heading">
+            <span class="about-photo-index">06 / Пространство</span>
+            <h2>Reception</h2>
+          </figcaption>
+        </figure>
+        <div class="story-columns" data-reveal style="transition-delay:0.1s">
+          <p class="body">Первая точка знакомства с галереей и её текущей программой.</p>
         </div>
       </section>
       <section id="what-we-do" class="section section--bg-deep about-photo-chapter about-photo-chapter--directions">
@@ -1092,19 +1156,6 @@
           <p class="body">Мы создаём поводы встречаться — от открытий выставок до мастер-классов и совместных проектов.</p>
         </div>
       </section>
-
-
-    <!-- ============================= CTA ============================= -->
-    <section class="cta-split">
-      <a href="/#contacts" class="cta-option" data-reveal>
-        <span class="cta-option-label">Приходите к нам</span>
-        <span class="cta-option-title">Контакты <span aria-hidden="true">→</span></span>
-      </a>
-      <a href="/events" class="cta-option" data-reveal style="transition-delay:0.1s">
-        <span class="cta-option-label">Смотрите, что у нас происходит</span>
-        <span class="cta-option-title">Ивенты <span aria-hidden="true">→</span></span>
-      </a>
-    </section>
   </main>
 
   <!-- ============================= CONTACTS / FOOTER ============================= -->
@@ -1117,8 +1168,12 @@
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.08s">
         <h4>Навигация</h4>
+        <a href="/">Главная</a>
+        <a href="/about">О нас</a>
         <a href="/events">Ивенты</a>
         <a href="/shop">Магазин</a>
+        <a href="/news">Новости</a>
+        <a href="#contacts">Контакты</a>
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.16s">
         <h4>Контакты</h4>

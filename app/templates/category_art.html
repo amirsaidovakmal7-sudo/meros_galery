@@ -640,55 +640,6 @@
     font-size: 0.8rem;
     color: rgba(242,237,228,0.5);
   }
-  /* ================= Category page — full product grid ================= */
-
-  .category-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px 20px;
-  }
-  @media (min-width: 640px) { .category-grid { grid-template-columns: repeat(3, 1fr); gap: 36px 24px; } }
-  @media (min-width: 960px) { .category-grid { grid-template-columns: repeat(4, 1fr); } }
-  .category-grid-item { width: auto; }
-  /* ================= Category Art — matted-frame horizontal carousel ================= */
-
-  .art-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 40px 28px;
-  }
-  @media (min-width: 640px) { .art-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 900px) { .art-grid { grid-template-columns: repeat(3, 1fr); } }
-  .art-card { display: block; }
-  .art-card-mat {
-    background: #fff;
-    padding: 18px;
-    box-shadow: 0 14px 30px rgba(28,26,22,0.12);
-  }
-  .art-card-frame { position: relative; aspect-ratio: 1 / 1; overflow: hidden; background: var(--flax-deep); }
-  .art-card-frame img,
-  .art-card-frame .ph {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    transition: transform 1s cubic-bezier(.19,1,.22,1);
-  }
-  .art-card:hover .art-card-frame img,
-  .art-card:hover .art-card-frame .ph { transform: scale(1.045); }
-  .art-card-name { margin: 16px 0 0; font-family: var(--font-display); font-size: 1.02rem; font-weight: 500; transition: color 0.3s ease; }
-  .art-card:hover .art-card-name { color: var(--terracotta); }
-  .art-card-price { margin: 2px 0 0; font-size: 0.85rem; color: var(--ink-soft); }
-  .art-card-status {
-    position: absolute;
-    top: 10px; left: 10px;
-    z-index: 2;
-    background: var(--ink);
-    color: var(--flax);
-    font-size: 0.64rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 0.4em 0.7em;
-    border-radius: 2px;
-  }
-  .art-card-link { display: inline-flex; margin-top: 10px; font-size: 0.82rem; }
 </style>
 <link rel="stylesheet" href="/static/css/meros-polish.css" />
 </head>
@@ -724,6 +675,7 @@
       <a href="/events"><span class="nav-overlay-index">03</span>Ивенты</a>
       <a href="/shop"><span class="nav-overlay-index">04</span>Магазин</a>
       <a href="/news"><span class="nav-overlay-index">05</span>Новости</a>
+      <a href="#contacts"><span class="nav-overlay-index">06</span>Контакты</a>
     </nav>
     <div class="nav-overlay-footer">
       <span>Ташкент, Узбекистан</span>
@@ -731,56 +683,44 @@
     </div>
   </div>
 
-  <main>
+  <main class="art-page">
     <!-- ============================= HERO ============================= -->
-    <section id="home" class="hero hero--about">
-      <div class="hero-media" aria-hidden="true">
-        <div class="hero-media-fallback"></div>
-        <div class="hero-media-scrim"></div>
-      </div>
-
-      <div class="hero-title-wrap" data-reveal>
-        <h1 class="hero-title">{{ category.category_name }}</h1>
-        <p class="hero-tagline">Работы современных художников Узбекистана</p>
-      </div>
-
-      <div class="hero-content">
-        <a href="/shop" class="hero-kicker" style="text-decoration:underline;">&larr; Весь магазин</a>
-        <div class="hero-content-right">
-          <button class="hero-scroll" id="heroScrollBtn">
-            <span>Смотреть</span>
-            <span class="hero-scroll-line"></span>
-          </button>
-        </div>
+    <section class="art-hero">
+      <img class="art-hero-photo" src="{{ category.cover_url }}" alt="">
+      <div class="hero-media-scrim" aria-hidden="true"></div>
+      <div class="art-hero-copy">
+        <h1 class="art-hero-title">{{ category.category_name }}</h1>
+        <p class="art-hero-tagline">Работы современных художников Узбекистана</p>
+        <a href="#artworks" class="art-hero-cta">Смотреть работы</a>
       </div>
     </section>
 
     <!-- ============================= ARTWORKS ============================= -->
-    <section id="artworks" class="section section--bg">
-      <div class="section-head" data-reveal>
-        <h2 class="h2">Работы</h2>
+    <section id="artworks" class="art-rail-section" data-rail aria-label="Работы">
+      <div class="art-rail-head">
+        <a href="/shop" class="link-arrow link-arrow--muted">Весь магазин</a>
+        <div class="rail-pager rail-pager--compact">
+          <button type="button" class="rail-btn" data-rail-prev aria-label="Назад">&larr;</button>
+          <button type="button" class="rail-btn" data-rail-next aria-label="Вперёд">&rarr;</button>
+        </div>
       </div>
 
-      <div class="art-grid">
+      <div class="art-rail-track" data-rail-track>
         {% for p in products %}
-        <a href="/shop/product/{{ p.id }}" class="art-card" data-reveal style="transition-delay:{{ forloop.counter0 }}30ms">
-          <div class="art-card-mat">
-            <div class="art-card-frame">
-              {% if p.photo1 %}
-              <img src="{{ p.photo1.url }}" alt="{{ p.name }}">
-              {% else %}
-              <div class="ph ph--warm"></div>
-              {% endif %}
-              {% if p.status %}<span class="art-card-status">{{ p.status }}</span>{% endif %}
-            </div>
-          </div>
-          <p class="art-card-name">{{ p.name }}</p>
-          <p class="art-card-price">{{ p.price }} сум</p>
-          <span class="link-arrow art-card-link">Подробнее</span>
+        <a href="/shop/product/{{ p.id }}" class="art-work">
+          <span class="art-work-mat">
+            {% if p.photo1 %}<img src="{{ p.photo1.url }}" alt="{{ p.name }}" loading="lazy">{% endif %}
+          </span>
+          <span class="art-work-name">{{ p.name }}</span>
+          <span class="art-work-price">{{ p.price }} сум</span>
         </a>
         {% empty %}
-        <p class="body">В этой категории пока нет работ.</p>
+        <p class="cat-empty">В этой категории пока нет работ.</p>
         {% endfor %}
+      </div>
+
+      <div class="rail-pager rail-pager--bar">
+        <span class="rail-pager-line"><i data-rail-progress></i></span>
       </div>
     </section>
   </main>
@@ -795,8 +735,12 @@
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.08s">
         <h4>Навигация</h4>
+        <a href="/">Главная</a>
+        <a href="/about">О нас</a>
         <a href="/events">Ивенты</a>
         <a href="/shop">Магазин</a>
+        <a href="/news">Новости</a>
+        <a href="#contacts">Контакты</a>
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.16s">
         <h4>Контакты</h4>

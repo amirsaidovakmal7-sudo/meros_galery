@@ -6,9 +6,22 @@ from .models import *
 
 
 
+# Порядок категорий магазина на сайте (как в структуре главной: main2–main3).
+# Категории, которых нет в списке, идут в конце в порядке из админки.
+SHOP_CATEGORY_ORDER = ['retail', 'vintage', 'art', 'secondhand']
+
+
+def ordered_categories():
+    def sort_key(category):
+        key = category.category_name.replace(' ', '').lower()
+        position = SHOP_CATEGORY_ORDER.index(key) if key in SHOP_CATEGORY_ORDER else len(SHOP_CATEGORY_ORDER)
+        return (position, category.my_order)
+    return sorted(ProductCategory.objects.all(), key=sort_key)
+
+
 def home_page(request):
     news = News.objects.all()
-    product_categories = ProductCategory.objects.all()
+    product_categories = ordered_categories()
     products = Products.objects.all()
     events = Events.objects.all()
     masterclasses = Masterclasses.objects.all()
@@ -32,7 +45,7 @@ def events_page(request):
 
 def shop_page(request):
     products = Products.objects.all()
-    product_categories = ProductCategory.objects.all()
+    product_categories = ordered_categories()
     context = {'products': products, 'product_categories': product_categories}
     return render(request, 'shop.html', context)
 
@@ -44,11 +57,6 @@ def news(request):
     news = News.objects.all()
     context = {'news': news}
     return render(request, 'news.html', context)
-
-
-def collaborations_page(request):
-    return render(request, 'coloborations.html', {})
-
 
 
 def exact_new(request, pk):

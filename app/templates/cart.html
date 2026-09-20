@@ -639,229 +639,9 @@
     font-size: 0.8rem;
     color: rgba(242,237,228,0.5);
   }
-  /* ================= Collaborations page — page-specific components ================= */
-
-  /* ---------- editorial collaboration profiles (alternating) ---------- */
-  .collab-case-list { display: flex; flex-direction: column; }
-  .collab-case {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    padding: 56px 0;
-    border-bottom: 1px solid var(--line);
-  }
-  .collab-case:first-child { padding-top: 0; }
-  .collab-case:last-child { border-bottom: none; }
-  @media (min-width: 860px) {
-    .collab-case { flex-direction: row; align-items: center; gap: 64px; }
-    .collab-case--flip { flex-direction: row-reverse; }
-  }
-  .collab-case-media { flex: 1 1 42%; min-width: 0; }
-  .collab-case-body { flex: 1 1 54%; min-width: 0; }
-  .collab-case-frame { aspect-ratio: 3 / 4; max-width: 420px; }
-  .collab-case-name { font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 500; margin: 0 0 0.2em; }
-  .collab-case-role { font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--indigo); margin: 0 0 1em; }
-  .collab-case-label {
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--brass);
-    margin: 1.3em 0 0.5em;
-  }
-  .collab-case-project { aspect-ratio: 16 / 10; max-width: 360px; margin-top: 22px; }
-
-  /* ---------- featured partner banners ---------- */
-  .partner-banner-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 16px;
-  }
-  .partner-banner-frame { aspect-ratio: 16 / 10; }
-  /* ---------- book the gallery: form ---------- */
-  .event-form {
-    max-width: 760px;
-    background: var(--flax);
-    padding: clamp(28px, 5vw, 52px);
-    border-radius: 8px;
-  }
-  .form-row { display: grid; grid-template-columns: 1fr; gap: 26px 32px; margin-bottom: 26px; }
-  @media (min-width: 640px) { .form-row { grid-template-columns: 1fr 1fr; } }
-  .form-field { display: flex; flex-direction: column; gap: 9px; }
-  .form-field--full { margin-bottom: 32px; }
-  .form-label { font-size: 0.74rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-soft); }
-
-  .event-form input,
-  .event-form select,
-  .event-form textarea {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    display: block;
-    width: 100%;
-    font-family: var(--font-sans);
-    font-size: 0.98rem;
-    color: var(--ink);
-    background: var(--flax-deep);
-    border: 1px solid transparent;
-    border-radius: 4px;
-    padding: 12px 14px;
-    outline: none;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease, background 0.3s ease;
-  }
-  .event-form input:hover,
-  .event-form select:hover,
-  .event-form textarea:hover { background: #e3d9c6; }
-  .event-form input:focus,
-  .event-form select:focus,
-  .event-form textarea:focus { background: var(--flax); border-color: var(--terracotta); }
-  .event-form textarea { resize: vertical; min-height: 100px; font-family: var(--font-sans); }
-
-  .event-form select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%234A453C' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 36px;
-    cursor: pointer;
-  }
-  .event-form input[type="date"] { cursor: pointer; }
-  .event-form input[type="date"]::-webkit-calendar-picker-indicator {
-    opacity: 0.55;
-    cursor: pointer;
-    filter: invert(20%) sepia(15%) saturate(500%) hue-rotate(360deg);
-  }
-
-  .form-submit {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6em;
-    margin-top: 8px;
-    background: var(--ink);
-    color: var(--flax);
-    border: none;
-    border-radius: 4px;
-    padding: 1em 2.4em;
-    font-family: var(--font-sans);
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.3s ease;
-  }
-  .form-submit:hover { background: var(--terracotta); transform: translateY(-1px); }
-  a.form-submit, button.form-submit { color: var(--flax); }
-  a.form-submit:hover, button.form-submit:hover { color: var(--flax); }
-  .form-submit:active { transform: translateY(0); }
-  @media (max-width: 480px) { .form-submit { width: 100%; justify-content: center; } }
-  /* ================= News page — card grid, per new reference ================= */
-
-  .news-page-title {
-    font-family: var(--font-display);
-    font-size: clamp(2.2rem, 6vw, 3.6rem);
-    font-weight: 600;
-  }
-
-  .news-card-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 44px 28px;
-  }
-  @media (min-width: 640px) { .news-card-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 960px) { .news-card-grid { grid-template-columns: repeat(3, 1fr); } }
-
-  .news-card-frame {
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
-    aspect-ratio: 4 / 5;
-    margin-bottom: 18px;
-    background: var(--flax-deep);
-  }
-  .news-card-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 1.1s cubic-bezier(.19,1,.22,1);
-  }
-  .news-card:hover .news-card-frame img { transform: scale(1.05); }
-  .news-card-date {
-    position: absolute;
-    top: 14px; left: 14px;
-    background: rgba(242,237,228,0.92);
-    color: var(--ink);
-    font-size: 0.72rem;
-    letter-spacing: 0.02em;
-    padding: 0.4em 0.9em;
-    border-radius: 999px;
-  }
-  .news-card-title {
-    font-family: var(--font-display);
-    font-size: 1.2rem;
-    font-weight: 500;
-    line-height: 1.3;
-    margin: 0 0 8px;
-    transition: color 0.3s ease;
-  }
-  .news-card:hover .news-card-title { color: var(--terracotta); }
-  .news-card-excerpt { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.6; }
-  /* ================= Cart page ================= */
-
-  .cart-list { display: flex; flex-direction: column; }
-  .cart-row {
-    display: grid;
-    grid-template-columns: 96px 1fr;
-    gap: 16px 20px;
-    padding: 28px 0;
-    border-bottom: 1px solid var(--line);
-    align-items: center;
-  }
-  @media (min-width: 700px) {
-    .cart-row { grid-template-columns: 96px 1.6fr 1fr 0.8fr; }
-  }
-  .cart-row:first-child { padding-top: 0; }
-
-  .cart-row-photo { position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden; grid-row: span 2; }
-  @media (min-width: 700px) { .cart-row-photo { grid-row: auto; } }
-  .cart-row-photo img,
-  .cart-row-photo .ph { width: 100%; height: 100%; object-fit: cover; display: block; position: absolute; inset: 0; }
-
-  .cart-row-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-  .cart-row-type { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brass); }
-  .cart-row-name {
-    font-family: var(--font-display);
-    font-size: 1.1rem;
-    font-weight: 500;
-    transition: color 0.3s ease;
-  }
-  .cart-row-name:hover { color: var(--terracotta); }
-  .cart-row-unit-price { font-size: 0.85rem; color: var(--ink-soft); }
-
-  .cart-row-qty { display: flex; flex-direction: column; gap: 8px; grid-column: 2 / -1; }
-  @media (min-width: 700px) { .cart-row-qty { grid-column: auto; } }
-  .cart-row-subtotal { font-size: 0.9rem; font-weight: 500; }
-
-  .cart-row-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; grid-column: 1 / -1; }
-  @media (min-width: 700px) { .cart-row-actions { grid-column: auto; align-items: flex-end; } }
-
-  .cart-total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding-top: 28px;
-    margin-top: 12px;
-    border-top: 1px solid var(--ink);
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-  }
-  .cart-total-note { margin-top: 10px; font-size: 0.8rem; color: var(--ink-soft); }
-
-  .cart-empty { text-align: center; padding: 40px 0; }
-  .cart-empty .link-arrow { margin-top: 16px; display: inline-flex; justify-content: center; }
-
-  .cart-row-qty-static { font-size: 0.92rem; color: var(--ink-soft); }
 </style>
 <link rel="stylesheet" href="/static/css/meros-polish.css" />
+<link rel="stylesheet" href="/static/css/meros-cart.css" />
 </head>
 <body class="meros-root">
 
@@ -895,6 +675,7 @@
       <a href="/events"><span class="nav-overlay-index">03</span>Ивенты</a>
       <a href="/shop"><span class="nav-overlay-index">04</span>Магазин</a>
       <a href="/news"><span class="nav-overlay-index">05</span>Новости</a>
+      <a href="#contacts"><span class="nav-overlay-index">06</span>Контакты</a>
     </nav>
     <div class="nav-overlay-footer">
       <span>Ташкент, Узбекистан</span>
@@ -903,85 +684,84 @@
   </div>
 
   <main>
-    <!-- ============================= TITLE ============================= -->
-    <section id="intro" class="section section--bg" style="text-align:center; padding-bottom:0;">
-      <h1 class="news-page-title" data-reveal>Корзина</h1>
-    </section>
+    <section class="cart-page">
+      <header class="cart-head">
+        <p class="eyebrow">Ваш выбор</p>
+        <h1 class="cart-title">Корзина</h1>
+        {% if cart %}<p class="cart-lede">Позиций: {{ cart|length }} · всего единиц: {{ cart_count }}</p>{% endif %}
+      </header>
 
-    <!-- ============================= CART ITEMS ============================= -->
-    <section id="cart-items" class="section section--bg">
       {% if cart %}
-      <div class="cart-list">
-        {% for item in cart %}
-        <div class="cart-row" data-reveal data-cart-id="{{ item.id }}" data-amount="{{ item.user_amount }}"
-          {% if item.user_product %}data-price="{{ item.user_product.price }}"
-          {% elif item.user_masterclass %}data-price="{{ item.user_masterclass.price }}"
-          {% elif item.user_event %}data-price="{{ item.user_event.price }}"{% endif %}>
+      <div class="cart-layout">
+        <ul class="cart-list">
+          {% for item in cart %}
+          <li class="cart-row" data-amount="{{ item.user_amount }}"
+            {% if item.user_product %}data-price="{{ item.user_product.price }}"
+            {% elif item.user_masterclass %}data-price="{{ item.user_masterclass.price }}"
+            {% elif item.user_event %}data-price="{{ item.user_event.price }}"{% endif %}>
 
-          {% if item.user_product %}
-          <a href="/shop/product/{{ item.user_product.id }}" class="cart-row-photo">
-            {% if item.user_product.photo1 %}
-            <img src="{{ item.user_product.photo1.url }}" alt="{{ item.user_product.name }}">
-            {% else %}
-            <div class="ph ph--warm"></div>
-            {% endif %}
-          </a>
-          <div class="cart-row-body">
-            <p class="cart-row-type">Товар</p>
-            <a href="/shop/product/{{ item.user_product.id }}" class="cart-row-name">{{ item.user_product.name }}</a>
-            <p class="cart-row-unit-price">{{ item.user_product.price }} / шт.</p>
-          </div>
-          {% elif item.user_event %}
-          <a href="/events/{{ item.user_event.id }}" class="cart-row-photo">
-            <img src="{{ item.user_event.photo_of_event.url }}" alt="{{ item.user_event.name }}">
-          </a>
-          <div class="cart-row-body">
-            <p class="cart-row-type">Ивент</p>
-            <a href="/events/{{ item.user_event.id }}" class="cart-row-name">{{ item.user_event.name }}</a>
-            {% if item.user_event.price %}<p class="cart-row-unit-price">{{ item.user_event.price }}</p>{% endif %}
-          </div>
-          {% elif item.user_masterclass %}
-          <a href="/events/masterclass/{{ item.user_masterclass.id }}" class="cart-row-photo">
-            <img src="{{ item.user_masterclass.photo.url }}" alt="{{ item.user_masterclass.name }}">
-          </a>
-          <div class="cart-row-body">
-            <p class="cart-row-type">Мастер-класс</p>
-            <a href="/events/masterclass/{{ item.user_masterclass.id }}" class="cart-row-name">{{ item.user_masterclass.name }}</a>
-            <p class="cart-row-unit-price">{{ item.user_masterclass.price }} / место</p>
-          </div>
-          {% endif %}
-
-          <div class="cart-row-qty">
-            <span class="cart-row-qty-static">Количество: {{ item.user_amount }}</span>
-            <p class="cart-row-subtotal">
-              {% if item.user_product %}{% if item.count_price_product %}{{ item.count_price_product }} сум{% endif %}
-              {% elif item.user_event %}{% if item.count_price_event %}{{ item.count_price_event }} сум{% endif %}
-              {% elif item.user_masterclass %}{% if item.count_price_masterclass %}{{ item.count_price_masterclass }} сум{% endif %}
-              {% endif %}
-            </p>
-          </div>
-
-          <div class="cart-row-actions">
             {% if item.user_product %}
-            <a href="/remove_from_cart_product/{{ item.user_product.id }}" class="link-arrow link-arrow--muted">Удалить</a>
+            <a href="/shop/product/{{ item.user_product.id }}" class="cart-row-photo" tabindex="-1" aria-hidden="true">
+              {% if item.user_product.photo1 %}<img src="{{ item.user_product.photo1.url }}" alt="">{% else %}<div class="ph ph--warm"></div>{% endif %}
+            </a>
+            <div class="cart-row-body">
+              <p class="cart-row-type">Товар</p>
+              <a href="/shop/product/{{ item.user_product.id }}" class="cart-row-name">{{ item.user_product.name }}</a>
+              <p class="cart-row-desc">{{ item.user_product.desc }}</p>
+              <p class="cart-row-unit"><span class="cart-row-unit-price">{{ item.user_product.price }} сум</span> / шт.</p>
+            </div>
             {% elif item.user_event %}
-            <a href="/remove_from_cart_event/{{ item.user_event.id }}" class="link-arrow link-arrow--muted">Удалить</a>
+            <a href="/events/{{ item.user_event.id }}" class="cart-row-photo" tabindex="-1" aria-hidden="true">
+              {% if item.user_event.photo_of_event %}<img src="{{ item.user_event.photo_of_event.url }}" alt="">{% else %}<div class="ph ph--warm"></div>{% endif %}
+            </a>
+            <div class="cart-row-body">
+              <p class="cart-row-type">Ивент</p>
+              <a href="/events/{{ item.user_event.id }}" class="cart-row-name">{{ item.user_event.name }}</a>
+              <p class="cart-row-desc">{{ item.user_event.desc }}</p>
+              <p class="cart-row-unit"><span class="cart-row-unit-price">{{ item.user_event.price }} сум</span> / место</p>
+            </div>
             {% elif item.user_masterclass %}
-            <a href="/remove_from_cart_masterclass/{{ item.user_masterclass.id }}" class="link-arrow link-arrow--muted">Удалить</a>
+            <a href="/events/masterclass/{{ item.user_masterclass.id }}" class="cart-row-photo" tabindex="-1" aria-hidden="true">
+              {% if item.user_masterclass.photo %}<img src="{{ item.user_masterclass.photo.url }}" alt="">{% else %}<div class="ph ph--warm"></div>{% endif %}
+            </a>
+            <div class="cart-row-body">
+              <p class="cart-row-type">Мастер-класс</p>
+              <a href="/events/masterclass/{{ item.user_masterclass.id }}" class="cart-row-name">{{ item.user_masterclass.name }}</a>
+              <p class="cart-row-desc">{{ item.user_masterclass.desc }}</p>
+              <p class="cart-row-unit"><span class="cart-row-unit-price">{{ item.user_masterclass.price }} сум</span> / место</p>
+            </div>
             {% endif %}
-          </div>
-        </div>
-        {% endfor %}
-      </div>
 
-      <div class="cart-total-row" data-reveal>
-        <span>Итого</span>
-        <span id="cartGrandTotal">—</span>
+            <div class="cart-row-side">
+              <div class="cart-row-qty">
+                <span class="cart-row-qty-label">Количество</span>
+                <span class="cart-row-qty-value">{{ item.user_amount }}</span>
+              </div>
+              <p class="cart-row-subtotal">
+                {% if item.user_product %}{% widthratio item.user_product.price 1 item.user_amount %} сум
+                {% elif item.user_event %}{% widthratio item.user_event.price 1 item.user_amount %} сум
+                {% elif item.user_masterclass %}{% widthratio item.user_masterclass.price 1 item.user_amount %} сум{% endif %}
+              </p>
+              {% if item.user_product %}<a href="/remove_from_cart_product/{{ item.user_product.id }}" class="cart-row-remove">Удалить</a>
+              {% elif item.user_event %}<a href="/remove_from_cart_event/{{ item.user_event.id }}" class="cart-row-remove">Удалить</a>
+              {% elif item.user_masterclass %}<a href="/remove_from_cart_masterclass/{{ item.user_masterclass.id }}" class="cart-row-remove">Удалить</a>{% endif %}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+
+        <aside class="cart-summary" aria-label="Итог заказа">
+          <div class="cart-summary-line"><span>Позиций</span><span>{{ cart|length }}</span></div>
+          <div class="cart-summary-line"><span>Всего единиц</span><span>{{ cart_count }}</span></div>
+          <div class="cart-summary-total"><span>Итого</span><span data-cart-total>—</span></div>
+          <a href="/shop" class="link-arrow link-arrow--muted">Продолжить покупки</a>
+        </aside>
       </div>
 
       {% else %}
-      <div class="cart-empty" data-reveal>
-        <p class="body-lg">Корзина пуста.</p>
+      <div class="cart-empty">
+        <p class="cart-empty-title">Здесь пока ничего нет</p>
+        <p>Выбранные вещи, билеты на события и места на мастер-классы появятся здесь.</p>
         <a href="/shop" class="link-arrow">Перейти в магазин</a>
       </div>
       {% endif %}
@@ -998,8 +778,12 @@
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.08s">
         <h4>Навигация</h4>
+        <a href="/">Главная</a>
+        <a href="/about">О нас</a>
         <a href="/events">Ивенты</a>
         <a href="/shop">Магазин</a>
+        <a href="/news">Новости</a>
+        <a href="#contacts">Контакты</a>
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.16s">
         <h4>Контакты</h4>
@@ -1056,40 +840,6 @@
     if (e.key === 'Escape') closeMenu();
   });
 
-  /* ---------- cart: итог по корзине ----------
-     Количество теперь неизменяемо в интерфейсе (только просмотр + удаление),
-     так что здесь только разовый подсчёт при загрузке страницы, без ± кнопок.
-     Если бэкенд уже отдал count_price — используем его; если строка
-     подытога пустая (count_price ещё не работает или вернул None) —
-     считаем сами по той же цене, что видно в карточке. */
-  function parsePriceToNumber(text) {
-    if (!text) return NaN;
-    var digits = text.replace(/[^\d]/g, "");
-    return digits ? parseInt(digits, 10) : NaN;
-  }
-
-  var cartTotal = 0;
-  document.querySelectorAll(".cart-row").forEach(function (row) {
-    var unitPrice = parsePriceToNumber(row.getAttribute("data-price"));
-    var qty = parseInt(row.getAttribute("data-amount"), 10) || 0;
-    var subtotalEl = row.querySelector(".cart-row-subtotal");
-    var rowSubtotal = NaN;
-
-    if (subtotalEl && subtotalEl.textContent.trim()) {
-      // count_price уже посчитал и отрендерил сервер — берём число оттуда.
-      rowSubtotal = parsePriceToNumber(subtotalEl.textContent);
-    } else if (!isNaN(unitPrice)) {
-      // сервер ничего не вернул — считаем сами и дорисовываем в карточку.
-      rowSubtotal = unitPrice * qty;
-      if (subtotalEl) subtotalEl.textContent = rowSubtotal.toLocaleString("ru-RU") + " сум";
-    }
-
-    if (!isNaN(rowSubtotal)) cartTotal += rowSubtotal;
-  });
-
-  var cartTotalEl = document.getElementById("cartGrandTotal");
-  if (cartTotalEl) cartTotalEl.textContent = cartTotal.toLocaleString("ru-RU") + " сум";
-
   /* ---------- reveal-on-scroll ---------- */
   var revealEls = document.querySelectorAll('[data-reveal]');
   if (prefersReduced) {
@@ -1136,6 +886,7 @@
   }
 })();
 </script>
+<script src="/static/js/meros-cart.js" defer></script>
 <script src="/static/js/meros-polish.js" defer></script>
 </body>
 </html>

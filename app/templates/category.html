@@ -640,115 +640,6 @@
     font-size: 0.8rem;
     color: rgba(242,237,228,0.5);
   }
-  /* ================= Category page — full product grid (3 per row, like the reference) ================= */
-
-  .vintage-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1px;
-    background: var(--line);
-    border: 1px solid var(--line);
-  }
-  @media (min-width: 640px) { .vintage-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 900px) { .vintage-grid { grid-template-columns: repeat(3, 1fr); } }
-  .vintage-card { background: var(--flax); display: flex; flex-direction: column; }
-  .vintage-card-frame {
-    position: relative;
-    aspect-ratio: 1 / 1;
-    background: var(--flax-deep);
-    padding: clamp(16px, 3vw, 28px);
-    box-sizing: border-box;
-    overflow: hidden;
-  }
-  .vintage-card-frame img,
-  .vintage-card-frame .ph {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    transition: transform 0.6s ease;
-  }
-  .vintage-card:hover .vintage-card-frame img,
-  .vintage-card:hover .vintage-card-frame .ph { transform: scale(1.04); }
-  .vintage-card-body {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 12px;
-    padding: 18px 20px 6px;
-  }
-  .vintage-card-name { font-size: 0.92rem; transition: color 0.3s ease; }
-  .vintage-card:hover .vintage-card-name { color: var(--terracotta); }
-  .vintage-card-price { font-size: 0.86rem; color: var(--ink-soft); white-space: nowrap; }
-  .vintage-card-status {
-    position: absolute;
-    top: 10px; left: 10px;
-    z-index: 2;
-    background: var(--ink);
-    color: var(--flax);
-    font-size: 0.64rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 0.4em 0.7em;
-    border-radius: 2px;
-  }
-  .vintage-card-link { display: inline-flex; margin: 0 20px 20px; font-size: 0.82rem; }
-
-  /* ================= Category page — product spotlight ================= */
-
-  .spotlight-carousel { position: relative; }
-  .spotlight-track {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-  .spotlight-track::-webkit-scrollbar { display: none; }
-  .spotlight-slide {
-    flex: 0 0 100%;
-    scroll-snap-align: start;
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: center;
-    gap: 32px;
-    padding-bottom: 40px;
-  }
-  @media (min-width: 760px) {
-    .spotlight-slide { flex-direction: row; justify-content: space-between; align-items: center; gap: 56px; }
-  }
-  .spotlight-info { flex: 1 1 40%; min-width: 0; }
-  .spotlight-eyebrow { font-size: 0.8rem; color: var(--ink-soft); margin: 0 0 0.6em; }
-  .spotlight-name { font-family: var(--font-display); font-size: clamp(1.6rem, 3.6vw, 2.4rem); font-weight: 500; margin: 0 0 0.5em; }
-  .spotlight-price { font-family: var(--font-display); font-size: 1.15rem; color: var(--terracotta); margin: 0.6em 0 0; }
-  .spotlight-buy {
-    display: inline-flex;
-    margin-top: 18px;
-    padding: 0.8em 1.7em;
-    border: 1px solid var(--ink);
-    font-size: 0.8rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-  .spotlight-buy:hover { background: var(--ink); color: var(--flax); }
-  .spotlight-photo { flex: 1 1 48%; width: 100%; max-width: 380px; }
-  .spotlight-photo img,
-  .spotlight-photo .ph { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; display: block; }
-  .spotlight-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding-top: 24px;
-  }
-  .spotlight-dot {
-    width: 6px;
-    height: 6px;
-    padding: 0;
-    border-radius: 50%;
-    background: var(--line);
-    transition: background 0.3s ease, transform 0.3s ease;
-  }
-  .spotlight-dot.is-active { background: var(--ink); transform: scale(1.4); }
 </style>
 <link rel="stylesheet" href="/static/css/meros-polish.css" />
 </head>
@@ -784,6 +675,7 @@
       <a href="/events"><span class="nav-overlay-index">03</span>Ивенты</a>
       <a href="/shop"><span class="nav-overlay-index">04</span>Магазин</a>
       <a href="/news"><span class="nav-overlay-index">05</span>Новости</a>
+      <a href="#contacts"><span class="nav-overlay-index">06</span>Контакты</a>
     </nav>
     <div class="nav-overlay-footer">
       <span>Ташкент, Узбекистан</span>
@@ -791,57 +683,55 @@
     </div>
   </div>
 
-  <main>
-    <!-- ============================= HERO ============================= -->
-    <!-- ============================= SPOTLIGHT ============================= -->
-    <section id="spotlight" class="section section--bg" style="padding-bottom:0;">
-      <a href="/shop" class="link-arrow link-arrow--muted" data-reveal style="margin-bottom:2em; display:inline-block;">&larr; Назад</a>
+  <main class="cat-page">
+    <h1 class="visually-hidden">{{ category.category_name }}</h1>
 
-      <div class="spotlight-carousel" data-carousel data-reveal>
-        <div class="spotlight-track" id="spotlightTrack">
+    <!-- ============================= FEATURED ============================= -->
+    <section class="cat-hero" data-rail aria-label="Избранное">
+      <div class="cat-hero-inner">
+        <a href="/shop" class="cat-hero-back">&larr; Магазин</a>
+        <div class="cat-hero-track" data-rail-track>
           {% for p in products|slice:":6" %}
-          <div class="spotlight-slide">
-            <div class="spotlight-info">
-              <p class="spotlight-eyebrow">/ {{ category.category_name }}</p>
-              <h2 class="spotlight-name">{{ p.name }}</h2>
-              <p class="body">{{ p.desc|truncatewords:30 }}</p>
-              <p class="spotlight-price">{{ p.price }}</p>
-              <a href="/shop/product/{{ p.id }}" class="spotlight-buy">Купить</a>
+          <article class="cat-hero-slide">
+            <div class="cat-hero-info">
+              <p class="cat-hero-cat">/ {{ category.category_name }}</p>
+              <h2 class="cat-hero-name">{{ p.name }}</h2>
+              <p class="cat-hero-desc">{{ p.desc|truncatewords:26 }}</p>
+              <p class="cat-hero-price">{{ p.price }} сум</p>
+              <a href="/shop/product/{{ p.id }}" class="cat-hero-buy">Купить</a>
             </div>
-            <div class="spotlight-photo">
-              {% if p.photo1 %}
-              <img src="{{ p.photo1.url }}" alt="{{ p.name }}">
-              {% else %}
-              <div class="ph ph--warm"></div>
-              {% endif %}
-            </div>
-          </div>
+            <a href="/shop/product/{{ p.id }}" class="cat-hero-photo" tabindex="-1" aria-hidden="true">
+              {% if p.photo1 %}<img src="{{ p.photo1.url }}" alt="">{% else %}<span class="cat-hero-photo-empty"></span>{% endif %}
+            </a>
+          </article>
           {% empty %}
-          <p class="body" style="padding:60px 0;">В этой категории пока нет товаров.</p>
+          <p class="cat-empty">В этой категории пока нет товаров.</p>
           {% endfor %}
         </div>
-        <div class="spotlight-dots"></div>
+        {% if products|length > 1 %}
+        <div class="rail-pager">
+          <span class="rail-pager-num" data-rail-current>01</span>
+          <span class="rail-pager-line"><i data-rail-progress></i></span>
+          <span class="rail-pager-num" data-rail-total>{{ products|slice:":6"|length|stringformat:"02d" }}</span>
+          <button type="button" class="rail-btn" data-rail-prev aria-label="Предыдущий товар">&larr;</button>
+          <button type="button" class="rail-btn" data-rail-next aria-label="Следующий товар">&rarr;</button>
+        </div>
+        {% endif %}
       </div>
     </section>
 
     <!-- ============================= ALL PRODUCTS ============================= -->
-    <section id="products" class="section section--bg">
-      <div class="vintage-grid">
+    <section id="products" class="cat-grid-section" aria-label="Все товары">
+      <div class="cat-grid">
         {% for p in products %}
-        <a href="/shop/product/{{ p.id }}" class="vintage-card" data-reveal style="transition-delay:{{ forloop.counter0 }}30ms">
-          <div class="vintage-card-frame">
-            {% if p.photo1 %}
-            <img src="{{ p.photo1.url }}" alt="{{ p.name }}">
-            {% else %}
-            <div class="ph ph--warm"></div>
-            {% endif %}
-            {% if p.status %}<span class="vintage-card-status">{{ p.status }}</span>{% endif %}
-          </div>
-          <div class="vintage-card-body">
-            <span class="vintage-card-name">{{ p.name }}</span>
-            <span class="vintage-card-price">{{ p.price }} сум</span>
-          </div>
-          <span class="link-arrow vintage-card-link">Подробнее</span>
+        <a href="/shop/product/{{ p.id }}" class="cat-card" data-reveal>
+          <span class="cat-card-frame">
+            {% if p.photo1 %}<img src="{{ p.photo1.url }}" alt="{{ p.name }}" loading="lazy">{% endif %}
+          </span>
+          <span class="cat-card-meta">
+            <span class="cat-card-name">{{ p.name }}</span>
+            <span class="cat-card-price">{{ p.price }} сум</span>
+          </span>
         </a>
         {% endfor %}
       </div>
@@ -858,8 +748,12 @@
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.08s">
         <h4>Навигация</h4>
+        <a href="/">Главная</a>
+        <a href="/about">О нас</a>
         <a href="/events">Ивенты</a>
         <a href="/shop">Магазин</a>
+        <a href="/news">Новости</a>
+        <a href="#contacts">Контакты</a>
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.16s">
         <h4>Контакты</h4>

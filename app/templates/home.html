@@ -699,6 +699,7 @@
       <a href="/events"><span class="nav-overlay-index">03</span>Ивенты</a>
       <a href="/shop"><span class="nav-overlay-index">04</span>Магазин</a>
       <a href="/news"><span class="nav-overlay-index">05</span>Новости</a>
+      <a href="#contacts"><span class="nav-overlay-index">06</span>Контакты</a>
     </nav>
     <div class="nav-overlay-footer">
       <span>Ташкент, Узбекистан</span>
@@ -710,17 +711,12 @@
     <!-- ============================= HERO ============================= -->
     <section id="home" class="hero">
       <div class="hero-media" aria-hidden="true">
-        <!--
-          No real footage of the gallery exists yet — "pidarasi.mp4" in the
-          media folder is an unrelated placeholder clip (a gaming controller
-          promo with a YouTube watermark) left over from development, not
-          MEROS content, so it must not autoplay as the site's first
-          impression. Until a real video is supplied, this warm gradient
-          fallback carries the hero on its own. To go live: drop the real
-          file in app/static/media/ and restore the <video>/<source> here
-          with its actual path.
-        -->
-        <div class="hero-media-fallback"></div>
+        <!-- Фото лежит под видео: показывается, пока видео грузится, и остаётся,
+             если браузер не даёт запустить autoplay. -->
+        <img class="hero-media-photo" src="/static/media/filosophy.jpg" alt="" style="object-position:50% 55%" />
+        <video id="heroVideo" class="hero-media-video" autoplay muted loop playsinline preload="auto" tabindex="-1" disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate noremoteplayback">
+          <source src="/static/media/hero.mp4" type="video/mp4" />
+        </video>
         <div class="hero-media-scrim"></div>
       </div>
       <div class="hero-content">
@@ -729,7 +725,7 @@
           <h1 class="hero-title">Галерея наследия и ремесла</h1>
         </div>
         <div class="hero-content-right">
-          <button class="hero-scroll" id="heroScrollBtn" aria-label="Смотреть дальше">
+          <button class="hero-scroll" id="heroScrollBtn" aria-label="Прокрутить вниз">
             <span class="hero-scroll-line"></span>
           </button>
         </div>
@@ -750,14 +746,14 @@
           <p class="body">
             Отбираем работы мастеров со всей страны, рассказываем истории тех, кто их создал, и создаём
             пространство для встречи коллекционеров, дизайнеров интерьера и всех, кто ищет вещи со
-            смыслом — от выставок и мастер-классов до совместных коллабораций.
+            смыслом — от выставок до мастер-классов.
           </p>
           <a href="/about" class="link-arrow">Узнать больше</a>
         </div>
 
         <div data-reveal style="transition-delay:0.15s" class="about-media">
           <figure data-parallax="0.06">
-            <div class="portrait-frame about-portrait"><img src="/static/media/dinara.jpg" alt=""></div>
+            <div class="portrait-frame about-portrait"><img src="/static/media/dinara-crop.jpg" alt=""></div>
           </figure>
         </div>
       </div>
@@ -774,40 +770,72 @@
       </div>
       <div class="shop-directory-grid" data-reveal>
         {% for c in categories %}
-        <a class="shop-directory-link" data-index="0{{ forloop.counter }}" href="/shop/category/{{ c.id }}"><span>Shop {{ c.category_name }}</span></a>
+        <a class="shop-directory-link" data-index="0{{ forloop.counter }}" href="/shop/category/{{ c.id }}"><img class="shop-directory-photo" src="{{ c.cover_url }}" alt="" loading="lazy"><span>Shop {{ c.category_name }}</span></a>
         {% endfor %}
       </div>
+    </section>
+
+    <!-- ============================= SHOP ============================= -->
+    <section id="shop" class="section section--bg-deep" aria-label="Магазин">
+      {% for c in categories %}
+      <div class="shop-category-block" data-reveal>
+        <a href="/shop/category/{{ c.id }}" class="teaser-banner shop-category-banner">
+          <div class="teaser-banner-media">
+            <img src="{{ c.cover_url }}" alt="" loading="lazy">
+          </div>
+          <span class="teaser-banner-cta">Shop {{ c.category_name }}</span>
+        </a>
+
+        {% if c.products_set.all %}
+        <div class="shop-carousel" data-rail>
+          <div class="shop-carousel-track" data-rail-track>
+            {% for p in c.products_set.all|slice:":12" %}
+            <a href="/shop/product/{{ p.id }}" class="shop-carousel-item">
+              <div class="shop-carousel-frame">
+                {% if p.photo1 %}
+                <img src="{{ p.photo1.url }}" alt="{{ p.name }}" loading="lazy">
+                {% else %}
+                <div class="ph ph--warm"></div>
+                {% endif %}
+              </div>
+              <p class="shop-carousel-name">{{ p.name }}</p>
+              <p class="shop-carousel-price">{{ p.price }} сум</p>
+            </a>
+            {% endfor %}
+          </div>
+          <div class="rail-pager rail-pager--compact" style="justify-content:flex-end">
+            <button type="button" class="rail-btn" data-rail-prev aria-label="Назад">&larr;</button>
+            <button type="button" class="rail-btn" data-rail-next aria-label="Вперёд">&rarr;</button>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
     </section>
 
     <!-- ============================= NEWS ============================= -->
-    <section id="news" class="section section--bg-deep">
-      <div class="section-head">
+    <section id="news" class="section section--bg">
+      <div class="section-head section-head--center">
         <div data-reveal><h2 class="h2">Что происходит</h2></div>
-        <a href="/news" class="link-arrow link-arrow--muted">Все новости</a>
       </div>
-      <div class="news-list">
-        {% for n in news|slice:":2" %}
-        <div data-reveal{% if not forloop.first %} style="transition-delay:0.1s"{% endif %}>
-          <a href="/news/{{ n.id }}" class="news-item">
-            <span class="news-item-image"><img src="{{ n.photo.url }}" alt="{{ n.title }}"></span>
-            <span class="news-item-body">
-              <span class="news-item-meta">
-                <span class="tag">Новости</span>
-                <span class="date">{{ n.date }}</span>
-              </span>
-              <span class="news-item-title">{{ n.title }}</span>
-              <span class="news-item-excerpt">{{ n.description|truncatewords:24 }}</span>
-              <span class="link-arrow">Читать</span>
-            </span>
-          </a>
-        </div>
+      <div class="news-tiles">
+        {% for n in news|slice:":3" %}
+        <a href="/news/{{ n.id }}" class="news-tile" data-reveal{% if not forloop.first %} style="transition-delay:{{ forloop.counter0 }}00ms"{% endif %}>
+          <img src="{{ n.photo.url }}" alt="" loading="lazy">
+          <span class="news-tile-body">
+            <span class="news-tile-date">{{ n.date|date:"d.m.Y" }}</span>
+            <span class="news-tile-title">{{ n.title }}</span>
+            <span class="news-tile-more">Читать</span>
+          </span>
+        </a>
         {% endfor %}
       </div>
+      <p style="text-align:center; margin-top:clamp(28px,4vw,44px);"><a href="/news" class="link-arrow link-arrow--muted">Все новости</a></p>
     </section>
 
     <!-- ============================= EVENTS ============================= -->
-    <section id="events" class="section section--bg">
-      <div class="section-head section-head--stack">
+    <section id="events" class="section section--bg-deep">
+      <div class="section-head section-head--center">
         <div data-reveal>
           <div class="eyebrow">Ивенты</div>
           <h2 class="h2">Events &amp; Masterclasses</h2>
@@ -816,70 +844,20 @@
 
       <a href="/events" class="teaser-banner" data-reveal>
         <div class="teaser-banner-media">
-          {% with next_event=events.first %}
-          {% if next_event.photo_of_event %}<img src="{{ next_event.photo_of_event.url }}" alt="">{% endif %}
-          {% endwith %}
+          <img src="/static/media/comunity.webp" alt="" loading="lazy">
         </div>
         <span class="teaser-banner-cta">Learn more</span>
       </a>
 
-      <p class="body" style="margin-top:28px; max-width:60ch;" data-reveal>
+      <p class="body" style="margin:28px auto 0; max-width:60ch; text-align:center;" data-reveal>
         Закрытые ужины, показы коллекций и мастер-классы от практикующих мастеров — всё, что можно
         провести и чему можно научиться в пространстве Meros.
       </p>
     </section>
 
-    <!-- ============================= SHOP ============================= -->
-    <section id="shop" class="section section--bg-deep">
-      <div class="section-head section-head--stack">
-        <div data-reveal>
-          <div class="eyebrow">Магазин</div>
-          <h2 class="h2">Вещи, у которых есть автор</h2>
-        </div>
-      </div>
-
-      {% for c in categories %}
-      {% if c.products_set.all %}
-      <div class="shop-category-block" data-reveal>
-        <a href="/shop/category/{{ c.id }}" class="teaser-banner shop-category-banner">
-          <div class="teaser-banner-media">
-            {% with cover=c.products_set.first %}
-            {% if cover.photo1 %}<img src="{{ cover.photo1.url }}" alt="">{% endif %}
-            {% endwith %}
-          </div>
-          <span class="teaser-banner-cta">Shop {{ c.category_name }}</span>
-        </a>
-
-        <h3 class="shop-category-name">{{ c.category_name }}</h3>
-
-        <div class="shop-carousel">
-          <div class="shop-carousel-track">
-            {% for p in c.products_set.all|slice:":12" %}
-            <a href="/shop/product/{{ p.id }}" class="shop-carousel-item">
-              <div class="shop-carousel-frame">
-                {% if p.photo1 %}
-                <img src="{{ p.photo1.url }}" alt="{{ p.name }}">
-                {% else %}
-                <div class="ph ph--warm"></div>
-                {% endif %}
-                {% if p.status %}<span class="shop-carousel-status">{{ p.status }}</span>{% endif %}
-              </div>
-              <p class="shop-carousel-name">{{ p.name }}</p>
-              <p class="shop-carousel-price">{{ p.price }} сум</p>
-              <span class="link-arrow shop-carousel-link">Подробнее</span>
-            </a>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-      {% endif %}
-      {% endfor %}
-    </section>
-
-    <!-- ============================= COLLABORATIONS ============================= -->
     <!-- ============================= FEEDBACK ============================= -->
     <section id="feedback" class="section section--bg">
-      <div class="section-head section-head--stack">
+      <div class="section-head section-head--center">
         <div data-reveal>
           <div class="eyebrow eyebrow--indigo">Отзывы</div>
           <h2 class="h2">Что говорят гости и коллекционеры</h2>
@@ -888,9 +866,15 @@
 
       <div class="feedback-tiles">
         {% for f in feedbacks|slice:":3" %}
-        <div class="feedback-tile" data-reveal style="transition-delay:{{ forloop.counter0 }}80ms">
-          <p class="feedback-tile-quote">{{ f.text }}</p>
-        </div>
+        <figure class="feedback-tile" data-reveal style="margin:0;transition-delay:{{ forloop.counter0 }}00ms">
+          <blockquote class="feedback-tile-quote" style="margin:0">{{ f.text }}</blockquote>
+          {% if f.author_name %}
+          <figcaption class="feedback-tile-author">
+            <span class="feedback-tile-name">{{ f.author_name }}</span>
+            {% if f.author_role %}<span class="feedback-tile-role">{{ f.author_role }}</span>{% endif %}
+          </figcaption>
+          {% endif %}
+        </figure>
         {% endfor %}
       </div>
     </section>
@@ -906,48 +890,43 @@
       <div class="instagram-strip" data-reveal>
         <a href="#" class="instagram-item">
           <div class="instagram-item-frame">
-            <div class="ph ph--a"></div>
+            <img src="/static/media/about-hero.jpg" alt="" loading="lazy">
             <span class="instagram-badge" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
             </span>
           </div>
-          <div class="instagram-meta"><span>♥ 214</span><span>💬 18</span></div>
         </a>
         <a href="#" class="instagram-item">
           <div class="instagram-item-frame">
-            <div class="ph ph--warm"></div>
+            <img src="/static/media/comunity.webp" alt="" loading="lazy">
             <span class="instagram-badge" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
             </span>
           </div>
-          <div class="instagram-meta"><span>♥ 176</span><span>💬 9</span></div>
         </a>
         <a href="#" class="instagram-item">
           <div class="instagram-item-frame">
-            <div class="ph ph--b"></div>
+            <img src="/static/media/direction.webp" alt="" loading="lazy">
             <span class="instagram-badge" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
             </span>
           </div>
-          <div class="instagram-meta"><span>♥ 302</span><span>💬 27</span></div>
         </a>
         <a href="#" class="instagram-item">
           <div class="instagram-item-frame">
-            <div class="ph ph--c"></div>
+            <img src="/static/media/quote.jpg" alt="" loading="lazy">
             <span class="instagram-badge" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
             </span>
           </div>
-          <div class="instagram-meta"><span>♥ 158</span><span>💬 6</span></div>
         </a>
         <a href="#" class="instagram-item">
           <div class="instagram-item-frame">
-            <div class="ph ph--poster"></div>
+            <img src="/static/media/comunity.jpg" alt="" loading="lazy">
             <span class="instagram-badge" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
             </span>
           </div>
-          <div class="instagram-meta"><span>♥ 241</span><span>💬 15</span></div>
         </a>
       </div>
       </section>
@@ -963,8 +942,12 @@
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.08s">
         <h4>Навигация</h4>
+        <a href="/">Главная</a>
+        <a href="/about">О нас</a>
         <a href="/events">Ивенты</a>
-        <a href="/#shop">Магазин</a>
+        <a href="/shop">Магазин</a>
+        <a href="/news">Новости</a>
+        <a href="#contacts">Контакты</a>
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.16s">
         <h4>Контакты</h4>
@@ -1030,14 +1013,38 @@
     });
   }
 
-  /* ---------- hero video: fade in once it actually has a frame to show ----------
-     Until a real file exists at the <source src>, this never fires and the
-     gradient fallback just stays visible underneath — no broken/black box. */
+  /* ---------- hero video: fades in over the photo once it has a frame ----------
+     The video is a silent backdrop by design: no controls, no sound button,
+     and any attempt to unmute (devtools, extensions, the context menu) is
+     reverted. При prefers-reduced-motion видео не запускается. */
   var heroVideo = document.getElementById('heroVideo');
   if (heroVideo) {
-    heroVideo.addEventListener('loadeddata', function () {
-      heroVideo.classList.add('is-ready');
+    var keepMuted = function () {
+      heroVideo.defaultMuted = true;
+      heroVideo.muted = true;
+      heroVideo.volume = 0;
+    };
+    keepMuted();
+    heroVideo.addEventListener('volumechange', function () {
+      if (!heroVideo.muted || heroVideo.volume !== 0) keepMuted();
     });
+    heroVideo.controls = false;
+    heroVideo.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    var heroSection = document.getElementById('home');
+    if (heroSection) heroSection.addEventListener('contextmenu', function (e) {
+      if (e.target === heroVideo || heroVideo.contains(e.target)) e.preventDefault();
+    });
+
+    if (prefersReduced) {
+      heroVideo.pause();
+      heroVideo.removeAttribute('autoplay');
+    } else {
+      var onReady = function () { heroVideo.classList.add('is-ready'); };
+      if (heroVideo.readyState >= 2) onReady();
+      else heroVideo.addEventListener('loadeddata', onReady);
+      var started = heroVideo.play();
+      if (started && started.catch) started.catch(function () {});
+    }
   }
 
   /* ---------- reveal-on-scroll ---------- */

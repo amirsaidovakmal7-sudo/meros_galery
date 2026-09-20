@@ -838,6 +838,7 @@
       <a href="/events"><span class="nav-overlay-index">03</span>Ивенты</a>
       <a href="/shop"><span class="nav-overlay-index">04</span>Магазин</a>
       <a href="/news"><span class="nav-overlay-index">05</span>Новости</a>
+      <a href="#contacts"><span class="nav-overlay-index">06</span>Контакты</a>
     </nav>
     <div class="nav-overlay-footer">
       <span>Ташкент, Узбекистан</span>
@@ -860,8 +861,8 @@
           <div class="news-card-frame">
             <img src="{{ n.photo.url }}" alt="{{ n.title }}">
             <span class="news-card-date">{{ n.date }}</span>
+            <h3 class="news-card-title">{{ n.title }}</h3>
           </div>
-          <h3 class="news-card-title">{{ n.title }}</h3>
           <p class="news-card-excerpt">{{ n.description|truncatewords:20 }}</p>
         </a>
         {% empty %}
@@ -881,8 +882,12 @@
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.08s">
         <h4>Навигация</h4>
+        <a href="/">Главная</a>
+        <a href="/about">О нас</a>
         <a href="/events">Ивенты</a>
         <a href="/shop">Магазин</a>
+        <a href="/news">Новости</a>
+        <a href="#contacts">Контакты</a>
       </div>
       <div class="footer-col" data-reveal style="transition-delay:0.16s">
         <h4>Контакты</h4>
