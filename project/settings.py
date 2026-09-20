@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['merosgallery.com', 'www.merosgallery.com']
 
 
 
+
 # Application definition
 
 INSTALLED_APPS = [

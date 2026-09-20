@@ -1,11 +1,6 @@
 (function () {
   'use strict';
 
-  document.querySelectorAll('.nav-logo, .footer-brand').forEach(function (logo) {
-    logo.textContent = 'merós';
-    logo.setAttribute('aria-label', 'Meros Gallery');
-  });
-
   var menu = document.querySelector('.nav-overlay');
   var menuLinks = menu && menu.querySelector('.nav-overlay-links');
   var mainHero = document.querySelector('main > .hero:first-child, main > .art-hero:first-child');
