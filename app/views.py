@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.db import models
 from .models import *
 
 
@@ -26,13 +27,13 @@ def home_page(request):
     events = Events.objects.all()
     masterclasses = Masterclasses.objects.all()
     feedbacks = Feedbacks.objects.all()
-    context = {'news': news, 'categories': product_categories, 'products': products, 'events': events, 'masterclasses': masterclasses, 'feedbacks': feedbacks}
+    context = {'news': news, 'categories': product_categories, 'products': products, 'events': events, 'masterclasses': masterclasses, 'feedbacks': feedbacks, 'cart_count': get_cart_count(request)}
     return render(request, 'home.html', context)
 
 
 def about_page(request):
     workers = Workers.objects.all()
-    context = {'workers': workers}
+    context = {'workers': workers, 'cart_count': get_cart_count(request)}
     return render(request, 'about.html', context)
 
 
@@ -40,13 +41,13 @@ def about_page(request):
 def events_page(request):
     events = Events.objects.all()
     masterclasses = Masterclasses.objects.all()
-    context = {'events': events, 'masterclasses': masterclasses}
+    context = {'events': events, 'masterclasses': masterclasses, 'cart_count': get_cart_count(request)}
     return render(request, 'events.html', context)
 
 def shop_page(request):
     products = Products.objects.all()
     product_categories = ordered_categories()
-    context = {'products': products, 'product_categories': product_categories}
+    context = {'products': products, 'product_categories': product_categories, 'cart_count': get_cart_count(request)}
     return render(request, 'shop.html', context)
 
 
@@ -55,40 +56,27 @@ def shop_page(request):
 
 def news(request):
     news = News.objects.all()
-    context = {'news': news}
+    context = {'news': news, 'cart_count': get_cart_count(request)}
     return render(request, 'news.html', context)
 
 
 def exact_new(request, pk):
     new = News.objects.get(id=pk)
-    context = {'new': new}
+    context = {'new': new, 'cart_count': get_cart_count(request)}
     return render(request, 'new.html', context)
 
 
 def product_page(request, pk):
     product = Products.objects.get(id=pk)
-    context = {'product': product}
+    context = {'product': product, 'cart_count': get_cart_count(request)}
     return render(request, 'product.html', context)
-
-
-
-def event_page(request, pk):
-    event = Events.objects.get(id=pk)
-    context = {'event': event}
-    return render(request, 'event.html', context)
-
-
-def masterclass_page(request, pk):
-    masterclass = Masterclasses.objects.get(id=pk)
-    context = {'masterclass': masterclass}
-    return render(request, 'masterclass.html', context)
 
 
 
 def category_product(request, pk):
     category = ProductCategory.objects.get(id=pk)
     products = Products.objects.filter(product_category=category)
-    context = {'products': products, 'category': category}
+    context = {'products': products, 'category': category, 'cart_count': get_cart_count(request)}
     if category.category_name == 'Art':
         return render(request, 'category_art.html', context)
     return render(request, 'category.html', context)
@@ -100,6 +88,12 @@ def get_session_key(request):
     if not request.session.session_key:
         request.session.create()
     return request.session.session_key
+
+
+def get_cart_count(request):
+    session_key = get_session_key(request)
+    total = Cart.objects.filter(session_key=session_key).aggregate(models.Sum('user_amount'))['user_amount__sum']
+    return total or 0
 
 
 def add_to_cart_product(request, pk):
@@ -130,12 +124,12 @@ def add_to_cart_event(request, pk):
             final_product = user_cart_event.user_amount + user_count
             user_cart_event.user_amount = final_product
             user_cart_event.save()
-            return redirect(f'/events/{pk}')
+            return redirect(f'/events#event-{pk}')
         else:
             if 1 <= user_count <= user_event.allowed_amount:
                 Cart.objects.create(session_key=session_key, user_event=user_event, user_amount=user_count).save()
-                return redirect(f'/events/{pk}')
-            return redirect(f'/events/{pk}')
+                return redirect(f'/events#event-{pk}')
+            return redirect(f'/events#event-{pk}')
     return False
 
 def add_to_cart_masterclass(request, pk):
@@ -148,12 +142,12 @@ def add_to_cart_masterclass(request, pk):
             final_amount = user_cart_masterclass.user_amount + user_count
             user_cart_masterclass.user_amount = final_amount
             user_cart_masterclass.save()
-            return redirect(f'/events/masterclass/{pk}')
+            return redirect(f'/events#masterclass-{pk}')
         else:
             if 1 <= user_count <= user_masterclass.allowed_amount:
                 Cart.objects.create(session_key=session_key, user_masterclass=user_masterclass, user_amount=user_count).save()
-                return redirect(f'/events/masterclass/{pk}')
-            return redirect(f'/events/masterclass/{pk}')
+                return redirect(f'/events#masterclass-{pk}')
+            return redirect(f'/events#masterclass-{pk}')
     return False
 
 
@@ -180,5 +174,5 @@ def remove_from_cart_masterclass(request, pk):
 def cart_page(request):
     session_key = get_session_key(request)
     cart = Cart.objects.filter(session_key=session_key)
-    context = {'cart': cart}
+    context = {'cart': cart, 'cart_count': get_cart_count(request)}
     return render(request, 'cart.html', context)

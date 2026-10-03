@@ -167,56 +167,6 @@
   color: #fff;
 }
 
-/* Home: a compact four-way directory, derived from real shop categories. */
-.shop-directory {
-  padding: clamp(46px, 6vw, 88px) clamp(20px, 5vw, 76px);
-  border-block: 1px solid var(--color-border);
-}
-.shop-directory-head {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: clamp(28px, 4vw, 52px);
-}
-.shop-directory-title {
-  margin: 0;
-  font: 400 clamp(2.2rem, 5vw, 5rem)/.95 var(--font-display);
-}
-.shop-directory-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-.shop-directory-link {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  min-height: clamp(280px, 30vw, 440px);
-  padding: 22px;
-  border-right: 1px solid var(--color-bg);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.meros-root .shop-directory-link { color: #fff; }
-.shop-directory-link:last-child { border-right: 0; }
-.shop-directory-photo {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(.74);
-  transition: transform 1.2s var(--ease-editorial, cubic-bezier(.19, 1, .22, 1));
-}
-.shop-directory-link > span,
-.shop-directory-link::before,
-.shop-directory-link::after { text-shadow: 0 1px 14px rgba(0, 0, 0, .45); }
-.shop-directory-link::before { content: attr(data-index); font-size: .7rem; letter-spacing: .14em; }
-.shop-directory-link > span { font: 400 clamp(1.45rem, 2.5vw, 2.35rem)/1 var(--font-display); }
-.shop-directory-link::after { content: '\2197'; align-self: end; font-size: 1.25rem; }
-.shop-directory-link:hover .shop-directory-photo { transform: scale(1.05); }
 
 
 /* About: tighter editorial rhythm and a distinct founder chapter.
@@ -342,9 +292,6 @@
 .meros-root .footer-col p { color: rgba(241,237,228,.82); }
 
 @media (max-width: 900px) {
-  .shop-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .shop-directory-link:nth-child(2) { border-right: 0; }
-  .shop-directory-link:nth-child(-n+2) { border-bottom: 1px solid var(--color-bg); }
   .meros-root .news-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .meros-root .vintage-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .space-editorial-head { grid-template-columns: 1fr; }
@@ -364,9 +311,6 @@
   .meros-root .nav-overlay-footer { flex-direction: column; gap: 6px; }
   .meros-preferences { gap: 14px; }
   .meros-preferences label { min-width: 0; flex: 1; }
-  .shop-directory { padding: 46px 18px; }
-  .shop-directory-head { align-items: start; flex-direction: column; }
-  .shop-directory-link { min-height: 145px; padding: 16px; }
   .meros-root .news-card-grid { grid-template-columns: 1fr; gap: 38px; }
   .meros-root .news-card-frame { aspect-ratio: 4/4.6; }
   .meros-root .vintage-grid { grid-template-columns: 1fr 1fr; gap: 34px 12px; }
@@ -378,8 +322,6 @@
 }
 
 @media (max-width: 350px) {
-  .shop-directory-grid { grid-template-columns: 1fr; }
-  .shop-directory-link { border-right: 0; border-bottom: 1px solid var(--color-bg); }
   .meros-root .vintage-grid { grid-template-columns: 1fr; }
 }
 
@@ -1269,7 +1211,7 @@ html { font-size: clamp(17px, 15.2px + .28vw, 19px); }
 .meros-root .body-lg { font-size: 1.3rem; line-height: 1.6; max-width: 52ch; }
 .meros-root .story-columns .body { font-size: 1.14rem; }
 
-.meros-root :is(
+.meros-root :where(
   .eyebrow, .tag, .date, .hero-kicker, .teaser-banner-cta,
   .about-photo-index, .founder-editorial-kicker, .founder-editorial-role,
   .quote-editorial-copy cite, .news-tile-date, .news-tile-more, .news-card-date,
@@ -1277,7 +1219,7 @@ html { font-size: clamp(17px, 15.2px + .28vw, 19px); }
   .cat-hero-cat, .footer-col h4, .footer-bottom, .art-hero-cta, .form-label
 ) { font-size: max(.82rem, 14px); }
 
-.meros-root :is(
+.meros-root :where(
   .shop-carousel-name, .shop-carousel-price, .cat-card-name, .cat-card-price,
   .news-card-excerpt, .link-arrow, .feedback-tile-name, .footer-col a, .footer-col p
 ) { font-size: max(1rem, 16px); }
@@ -1400,4 +1342,123 @@ html { font-size: clamp(17px, 15.2px + .28vw, 19px); }
 /* Parallax pushed the About portrait over the text on phones and tablets. */
 @media (max-width: 900px) {
   .meros-root [data-parallax] { transform: none !important; }
+}
+
+/* --------------------------------------------------------------------------
+   Home and card pages, second round of client feedback.
+   -------------------------------------------------------------------------- */
+
+/* Hero: the headline's first letters carry side bearing, so on desktop it
+   started 1–4px right of "ТАШКЕНТ". Nudge the kicker so both read as one line. */
+@media (min-width: 900px) {
+  .meros-root .hero-heading .hero-kicker { padding-left: .2vw; }
+}
+
+/* Home "О Meros": smaller text, and the portrait stays to the right of the
+   text on phones too (as in main1.jpg) instead of dropping below it. */
+.meros-root #about .h2 { font-size: clamp(1.45rem, 2.3vw, 2.1rem); line-height: 1.15; margin-block: .25em .5em; }
+.meros-root #about .body-lg { font-size: 1.02rem; line-height: 1.65; }
+.meros-root #about .body { font-size: .95rem; line-height: 1.7; }
+.meros-root #about .about-portrait { max-width: 300px; }
+@media (max-width: 899px) {
+  .meros-root #about .about-grid {
+    grid-template-columns: minmax(0, 1fr) clamp(96px, 30vw, 240px);
+    gap: clamp(14px, 4vw, 40px);
+    align-items: center;
+  }
+  .meros-root #about .about-portrait { margin: 0; max-width: none; width: 100%; }
+  .meros-root #about .h2 { font-size: clamp(1.25rem, 5.2vw, 1.7rem); }
+  .meros-root #about .body-lg { font-size: .88rem; line-height: 1.6; margin-bottom: .8em; }
+  .meros-root #about .body { font-size: .82rem; line-height: 1.6; }
+  .meros-root #about .eyebrow { font-size: .72rem; }
+}
+
+/* Cards on phones look like on desktop: three in a row, then a new row. */
+@media (max-width: 700px) {
+  /* home + /shop: category carousels become a 3-column grid */
+  .meros-root .shop-carousel-track {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px 10px;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+  .meros-root .shop-carousel-item { flex: none; width: auto; }
+  .meros-root .shop-carousel-name { font-size: .78rem; line-height: 1.25; margin-top: 8px; }
+  .meros-root .shop-carousel-price { font-size: .72rem; }
+  .shop-carousel .rail-pager { display: none; }
+
+  /* home news: three staggered tiles */
+  .news-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .news-tile { aspect-ratio: 3 / 4.4; }
+  .news-tile:nth-child(2) { aspect-ratio: 3 / 5.2; }
+  .news-tile,
+  .news-tile:nth-child(2) { aspect-ratio: auto; }
+  .news-tile { min-height: 230px; }
+  .news-tile:nth-child(2) { min-height: 290px; }
+  .news-tile-body { padding: 8px; gap: 4px; }
+  .meros-root .news-tile-date { font-size: .58rem; letter-spacing: .06em; }
+  .meros-root .news-tile-title { font-size: .78rem; line-height: 1.2; }
+  .news-tile-more { display: none; }
+
+  /* /news */
+  .meros-root .news-card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 8px; }
+  .meros-root .news-card-frame { aspect-ratio: 3 / 4.2; }
+  .meros-root .news-card-title { left: 8px; right: 8px; bottom: 8px; font-size: .78rem; }
+  .meros-root .news-card-date { font-size: .58rem; padding: .25em .55em; top: 6px; left: 6px; }
+  .meros-root .news-card-excerpt { font-size: .72rem; line-height: 1.35; margin-top: 8px;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* category pages */
+  .cat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 8px; }
+  .meros-root .cat-card-name { font-size: .78rem; line-height: 1.25; }
+  .meros-root .cat-card-price { font-size: .72rem; }
+  .meros-root .cat-card-meta { padding-top: 8px; }
+
+  /* Art: works in a 3-column grid instead of a carousel */
+  .art-rail-section { padding-right: clamp(20px, 5vw, 76px); }
+  .art-rail-track { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 8px; overflow: visible; padding-right: 0; }
+  .art-work { flex: none; }
+  .meros-root .art-work-mat { padding: 8px; }
+  .meros-root .art-work-name { font-size: .78rem; margin-top: 8px; }
+  .meros-root .art-work-price { font-size: .72rem; }
+  .art-rail-head .rail-pager, .art-rail-section .rail-pager--bar { display: none; }
+
+  /* /events: event and masterclass cards, three per row */
+  .events-page #catalog { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 8px; align-items: start; }
+  .events-page #catalog .story-block { margin: 0; min-width: 0; }
+  .events-page #catalog .story-carousel-track { aspect-ratio: 3 / 4.2; min-height: 0; }
+  .events-page #catalog .story-carousel-overlay { padding: 6px; align-items: flex-end; }
+  .events-page #catalog .story-carousel-text { font-size: .72rem; line-height: 1.2; margin-bottom: 6px; }
+  .events-page #catalog .story-carousel-btn { padding: .35em .7em; font-size: .56rem; letter-spacing: .06em; }
+  .events-page #catalog .story-columns { display: block; margin-top: 8px; }
+  .events-page #catalog .story-columns .body { font-size: .72rem; line-height: 1.35;
+    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .events-page #catalog .story-columns .date { font-size: .6rem; }
+}
+
+/* Footer contact information: smaller text on every page. */
+.meros-root .footer-col a,
+.meros-root .footer-col p { font-size: .8rem; line-height: 1.5; margin-bottom: 8px; }
+.meros-root .footer-col h4 { font-size: .74rem; }
+.meros-root .footer-tagline { font-size: .85rem; }
+
+/* Mobile footer: on desktop "Навигация" and "Контакты" already sit next to
+   each other (a 3-column row with the brand block). Below the 800px
+   breakpoint the whole footer used to collapse into one single column, so
+   "Контакты" ended up stacked far below "Навигация" instead of beside it.
+   Now the brand block still takes its own full-width row, but the two
+   columns keep sitting side by side, same as on desktop. */
+@media (max-width: 799px) {
+  .meros-root .footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 20px;
+  }
+  .meros-root .footer-top > div:not(.footer-col) {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 420px) {
+  .meros-root .footer-top { gap: 28px 14px; }
+  .meros-root .footer-col h4 { margin-bottom: 10px; }
 }

@@ -641,7 +641,30 @@
     color: rgba(242,237,228,0.5);
   }
 </style>
-<link rel="stylesheet" href="/static/css/meros-polish.css" />
+<link rel="stylesheet" href="/static/css/meros-polish.css?v=2" />
+<style>
+  /* Название категории и её текст (как на странице Art), теперь видны и
+     здесь — раньше название категории было только скрытым h1 для a11y. */
+  .cat-intro {
+    padding: clamp(112px, 12vw, 152px) clamp(20px, 6vw, 80px) 0;
+    text-align: center;
+  }
+  .cat-intro-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .cat-intro-desc {
+    margin: 0.9em auto 0;
+    max-width: 56ch;
+    color: var(--color-muted, var(--ink-soft));
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+</style>
 </head>
 <body class="meros-root">
 
@@ -684,7 +707,10 @@
   </div>
 
   <main class="cat-page">
-    <h1 class="visually-hidden">{{ category.category_name }}</h1>
+    <div class="cat-intro" data-reveal>
+      <h1 class="cat-intro-title">{{ category.category_name }}</h1>
+      {% if category.description %}<p class="cat-intro-desc">{{ category.description }}</p>{% endif %}
+    </div>
 
     <!-- ============================= FEATURED ============================= -->
     <section class="cat-hero" data-rail aria-label="Избранное">
@@ -701,7 +727,7 @@
               <a href="/shop/product/{{ p.id }}" class="cat-hero-buy">Купить</a>
             </div>
             <a href="/shop/product/{{ p.id }}" class="cat-hero-photo" tabindex="-1" aria-hidden="true">
-              {% if p.photo1 %}<img src="{{ p.photo1.url }}" alt="">{% else %}<span class="cat-hero-photo-empty"></span>{% endif %}
+              {% if p.image.first %}<img src="{{ p.image.first.image.url }}" alt="">{% else %}<span class="cat-hero-photo-empty"></span>{% endif %}
             </a>
           </article>
           {% empty %}
@@ -726,7 +752,7 @@
         {% for p in products %}
         <a href="/shop/product/{{ p.id }}" class="cat-card" data-reveal>
           <span class="cat-card-frame">
-            {% if p.photo1 %}<img src="{{ p.photo1.url }}" alt="{{ p.name }}" loading="lazy">{% endif %}
+            {% if p.image.first %}<img src="{{ p.image.first.image.url }}" alt="{{ p.name }}" loading="lazy">{% endif %}
           </span>
           <span class="cat-card-meta">
             <span class="cat-card-name">{{ p.name }}</span>

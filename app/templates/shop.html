@@ -391,6 +391,31 @@
     100% { top: 100%; }
   }
 
+  /* Текст поверх баннера-героя (по центру, крупнее — клиент попросил
+     удобнее читать); на остальных страницах с таким же героем (about,
+     events, news, product) эти правила уже есть в их собственных стилях —
+     здесь их не хватало, из-за чего текст падал в левый нижний угол. */
+  .hero-title-wrap {
+    /* Absolutely positioned overlay, not a flex sibling of .hero-content:
+       both used to sit side by side in the hero's row layout on wide
+       screens, and since .hero-content has width:100%, it claimed the
+       whole row and squeezed this block down to ~0 width, wrapping the
+       heading one letter per line and pushing it off-screen. */
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 40px;
+    color: #fff;
+    pointer-events: none;
+  }
+  .hero-title { font-family: var(--font-display); font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 500; margin: 0 0 0.45em; }
+  .hero-tagline { font-size: clamp(1.05rem, 1.6vw, 1.3rem); max-width: 52ch; opacity: 0.92; line-height: 1.5; }
+
   /* ---------- about ---------- */
 
   #about { position: relative; overflow: hidden; }
@@ -515,7 +540,6 @@
 
   .shop-category-block { margin-bottom: clamp(56px, 8vw, 88px); }
   .shop-category-block:last-child { margin-bottom: 0; }
-  .shop-category-banner { margin-bottom: 28px; }
   .shop-category-name {
     font-family: var(--font-display);
     font-size: clamp(1.6rem, 3.4vw, 2.4rem);
@@ -523,9 +547,7 @@
     text-align: center;
     margin: 0 0 20px;
   }
-  .shop-category-desc { max-width: 62ch; margin: 0 auto 32px; text-align: center; }
-  .shop-category-desc .body { margin: 0 0 0.8em; }
-  .shop-category-desc .body:last-child { margin-bottom: 0; }
+  .shop-category-banner { margin-bottom: 28px; }
   .shop-carousel-track {
     display: flex;
     gap: 16px;
@@ -672,7 +694,7 @@
     color: rgba(242,237,228,0.5);
   }
 </style>
-<link rel="stylesheet" href="/static/css/meros-polish.css" />
+<link rel="stylesheet" href="/static/css/meros-polish.css?v=2" />
 </head>
 <body class="meros-root">
 
@@ -739,17 +761,19 @@
 
     <!-- ============================= INTRO ============================= -->
     <section id="intro" class="section section--bg" style="padding-bottom:0;">
-      <div class="section-head section-head--stack" data-reveal>
-        <div class="eyebrow">Магазин</div>
-        <h2 class="h2">Вещи, у которых есть автор</h2>
-        <p class="body-lg" style="margin-top:0.8em; max-width:70ch;">
-          Авторская одежда, винтажные находки, произведения искусства и предметы ручной работы —
-          каждая вещь представлена в единственном экземпляре или ограниченном количестве.
-        </p>
-        <p class="body" style="max-width:70ch;">
-          Мы выбираем предметы, в которых чувствуется рука автора, культурная память и собственная
-          история. Это вещи, которые не просто занимают место, а становятся частью жизни.
-        </p>
+      <div class="section-head section-head--center">
+        <div data-reveal>
+          <div class="eyebrow">Магазин</div>
+          <h2 class="h2">Вещи, у которых есть автор</h2>
+          <p class="body-lg" style="margin:0.8em auto 0; max-width:70ch;">
+            Авторская одежда, винтажные находки, произведения искусства и предметы ручной работы —
+            каждая вещь представлена в единственном экземпляре или ограниченном количестве.
+          </p>
+          <p class="body" style="margin:0 auto; max-width:70ch;">
+            Мы выбираем предметы, в которых чувствуется рука автора, культурная память и собственная
+            история. Это вещи, которые не просто занимают место, а становятся частью жизни.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -758,6 +782,7 @@
       {% for c in product_categories %}
       {% if c.products_set.all %}
       <div class="shop-category-block" id="{{ c.category_name|slugify }}" data-reveal>
+        <h3 class="shop-category-name">{{ c.category_name }}</h3>
         <a href="/shop/category/{{ c.id }}" class="teaser-banner shop-category-banner">
           <div class="teaser-banner-media">
             <img src="{{ c.cover_url }}" alt="" loading="lazy">
@@ -780,30 +805,13 @@
           </div>
         </a>
 
-        <h3 class="shop-category-name">{{ c.category_name }}</h3>
-        <div class="shop-category-desc" data-reveal>
-          {% if c.category_name == "Retail" %}
-          <p class="body">Авторская одежда и аксессуары, созданные небольшими сериями. Современные силуэты, традиционные техники и выразительные фактуры соединяются в вещах с собственным характером.</p>
-          <p class="body">Каждый предмет выбран за качество, индивидуальность и способность оставаться актуальным дольше одного сезона.</p>
-          {% elif c.category_name == "Vintage" %}
-          <p class="body">Редкие предметы одежды, аксессуары, мебель и декор, выбранные за форму, качество и неповторимый характер.</p>
-          <p class="body">Мы верим, что хорошая вещь не устаревает. Со временем она становится выразительнее и обретает новую жизнь рядом с человеком, который способен её увидеть.</p>
-          {% elif c.category_name == "Secondhand" %}
-          <p class="body">Кураторская коллекция одежды и аксессуаров в отличном состоянии.</p>
-          <p class="body">Мы выбираем вещи за актуальный крой, качество материала и способность легко войти в современный гардероб. Это бережное отношение к вещам без компромисса между эстетикой, качеством и ценой.</p>
-          {% elif c.category_name == "Art" %}
-          <p class="body">Живопись, графика, керамика, текстиль и авторские объекты современных художников и мастеров.</p>
-          <p class="body">Мы выбираем произведения с собственным визуальным языком, в которых чувствуется рука автора и культурная память. Это искусство создано не для дистанции — оно должно жить рядом с человеком.</p>
-          {% endif %}
-        </div>
-
         <div class="shop-carousel" data-rail>
           <div class="shop-carousel-track" data-rail-track>
             {% for p in c.products_set.all %}
             <a href="/shop/product/{{ p.id }}" class="shop-carousel-item">
               <div class="shop-carousel-frame">
-                {% if p.photo1 %}
-                <img src="{{ p.photo1.url }}" alt="{{ p.name }}">
+                {% if p.image.first %}
+                <img src="{{ p.image.first.image.url }}" alt="{{ p.name }}">
                 {% else %}
                 <div class="ph ph--warm"></div>
                 {% endif %}

@@ -215,6 +215,7 @@
     flex: 0 0 100%;
     scroll-snap-align: start;
   }
+  .story-carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .story-carousel-overlay {
     position: absolute;
     inset: 0;
@@ -707,9 +708,14 @@
   .hero--about { flex-direction: column; align-items: stretch; }
   .hero-media-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .hero-title-wrap {
-    position: relative;
+    /* Absolutely positioned overlay, not a flex sibling of .hero-content:
+       both used to sit side by side in the hero's row layout on wide
+       screens, and since .hero-content has width:100%, it claimed the
+       whole row and squeezed this block down to ~0 width, wrapping the
+       heading one letter per line and pushing it off-screen. */
+    position: absolute;
+    inset: 0;
     z-index: 2;
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -717,6 +723,7 @@
     text-align: center;
     padding: 120px 20px 40px;
     color: #fff;
+    pointer-events: none;
   }
   .hero-title { font-family: var(--font-display); font-size: clamp(2.2rem, 6vw, 4.2rem); font-weight: 500; margin: 0 0 0.4em; }
   .hero-tagline { font-size: 1.05rem; max-width: 44ch; opacity: 0.92; }
@@ -863,7 +870,8 @@
   .news-detail-body .body-lg { max-width: none; }
   .news-detail-body .body-lg p { margin: 0 0 1.2em; }
   .news-detail-body .body-lg p:last-child { margin-bottom: 0; }
-  .news-detail-photo { aspect-ratio: 16 / 10; }
+  .news-detail-photo { aspect-ratio: 16 / 10; border-radius: 6px; background: var(--flax-deep); }
+  .news-detail-photo .story-carousel-track { height: 100%; }
   .news-detail-title {
     font-family: var(--font-display);
     font-size: clamp(1.8rem, 4vw, 2.8rem);
@@ -872,7 +880,7 @@
     margin: 0.3em 0 0.8em;
   }
 </style>
-<link rel="stylesheet" href="/static/css/meros-polish.css" />
+<link rel="stylesheet" href="/static/css/meros-polish.css?v=2" />
 </head>
 <body class="meros-root">
 
@@ -934,20 +942,21 @@
     <!-- ============================= ARTICLE ============================= -->
     <section id="text" class="section section--bg">
       <div class="news-detail-body" data-reveal>
-        <div class="photo-frame news-detail-photo"><img src="{{ new.photo.url }}" alt="{{ new.title }}"></div>
+        <div class="story-carousel news-detail-photo" data-carousel>
+          <div class="story-carousel-track">
+            {% for photo in new.image.all %}
+            <div class="story-carousel-slide"><img src="{{ photo.image.url }}" alt="{{ new.title }}"></div>
+            {% empty %}
+            <div class="story-carousel-slide"><div class="ph ph--warm"></div></div>
+            {% endfor %}
+          </div>
+          <div class="story-carousel-dots"></div>
+        </div>
         <p class="date" style="margin-top:24px;">{{ new.date }}</p>
         <h1 class="news-detail-title">{{ new.title }}</h1>
         <div class="body-lg">{{ new.description|linebreaks }}</div>
       </div>
     </section>
-
-    <!-- ============================= GALLERY =============================
-         В модели News нет поля под галерею — только одно фото (уже стоит
-         обложкой выше). Нужна отдельная модель вида:
-           class NewsPhoto(models.Model):
-               news = models.ForeignKey(News, related_name='gallery', on_delete=models.CASCADE)
-               photo = models.ImageField(upload_to='media')
-         Как появится — верстаю этот блок. -->
 
     <!-- ============================= CTA ============================= -->
     <section class="cta-split">

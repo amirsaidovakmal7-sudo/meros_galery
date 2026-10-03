@@ -804,7 +804,7 @@
   .news-card:hover .news-card-title { color: var(--terracotta); }
   .news-card-excerpt { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.6; }
 </style>
-<link rel="stylesheet" href="/static/css/meros-polish.css" />
+<link rel="stylesheet" href="/static/css/meros-polish.css?v=2" />
 </head>
 <body class="meros-root">
 
@@ -859,7 +859,7 @@
         {% for n in news %}
         <a href="/news/{{ n.id }}" class="news-card" data-reveal style="transition-delay:{{ forloop.counter0 }}60ms">
           <div class="news-card-frame">
-            <img src="{{ n.photo.url }}" alt="{{ n.title }}">
+            {% if n.image.first %}<img src="{{ n.image.first.image.url }}" alt="{{ n.title }}">{% else %}<div class="ph ph--warm"></div>{% endif %}
             <span class="news-card-date">{{ n.date }}</span>
             <h3 class="news-card-title">{{ n.title }}</h3>
           </div>

@@ -9,8 +9,6 @@ urlpatterns = [
     path('news', views.news),
     path('news/<int:pk>', views.exact_new),
     path('shop/product/<int:pk>', views.product_page),
-    path('events/<int:pk>', views.event_page),
-    path('events/masterclass/<int:pk>', views.masterclass_page),
     path('shop/category/<int:pk>', views.category_product),
     path('add_to_cart_product/<int:pk>', views.add_to_cart_product),
     path('cart', views.cart_page),

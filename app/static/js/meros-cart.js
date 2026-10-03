@@ -94,7 +94,12 @@
   }
 
   function sourcePhoto(form) {
-    var scope = form.closest('section') || document;
+    // .story-block (events/masterclasses on /events) wraps exactly one
+    // item's own carousel + form; several of them can share one <section>,
+    // so that has to be tried first or the animation would always grab the
+    // first item's photo. Product/event single-item pages have no
+    // .story-block, so this falls through to the old section-based scope.
+    var scope = form.closest('.story-block') || form.closest('section') || document;
     var track = scope.querySelector('.story-carousel-track');
     if (track) {
       var left = track.getBoundingClientRect().left;

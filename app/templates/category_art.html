@@ -641,7 +641,7 @@
     color: rgba(242,237,228,0.5);
   }
 </style>
-<link rel="stylesheet" href="/static/css/meros-polish.css" />
+<link rel="stylesheet" href="/static/css/meros-polish.css?v=2" />
 </head>
 <body class="meros-root">
 
@@ -690,7 +690,7 @@
       <div class="hero-media-scrim" aria-hidden="true"></div>
       <div class="art-hero-copy">
         <h1 class="art-hero-title">{{ category.category_name }}</h1>
-        <p class="art-hero-tagline">Работы современных художников Узбекистана</p>
+        <p class="art-hero-tagline">{{ category.description|default:"Работы современных художников Узбекистана" }}</p>
         <a href="#artworks" class="art-hero-cta">Смотреть работы</a>
       </div>
     </section>
@@ -709,7 +709,7 @@
         {% for p in products %}
         <a href="/shop/product/{{ p.id }}" class="art-work">
           <span class="art-work-mat">
-            {% if p.photo1 %}<img src="{{ p.photo1.url }}" alt="{{ p.name }}" loading="lazy">{% endif %}
+            {% if p.image.first %}<img src="{{ p.image.first.image.url }}" alt="{{ p.name }}" loading="lazy">{% endif %}
           </span>
           <span class="art-work-name">{{ p.name }}</span>
           <span class="art-work-price">{{ p.price }} сум</span>
