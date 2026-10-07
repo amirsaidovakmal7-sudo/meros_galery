@@ -3,7 +3,23 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>{{ category.category_name }} — Meros</title>
+<script>
+  /* Язык выбирается в меню (meros-i18n.js). Для ENG/UZB страница скрыта до
+     перевода, чтобы не мигал русский текст; через 2.5 с показывается в любом случае. */
+  (function () {
+    try {
+      var lang = window.localStorage.getItem('meros-siteLanguage');
+      if (lang === 'en' || lang === 'uz') {
+        var html = document.documentElement;
+        html.lang = lang;
+        html.classList.add('i18n-pending');
+        setTimeout(function () { html.classList.remove('i18n-pending'); }, 2500);
+      }
+    } catch (e) {}
+  })();
+</script>
+<style>html.i18n-pending body { visibility: hidden; }</style>
+<title data-ru="{{ category.category_name }} — Meros" data-en="{% if category.category_name_en %}{{ category.category_name_en }} — Meros{% endif %}" data-uz="{% if category.category_name_uz %}{{ category.category_name_uz }} — Meros{% endif %}">{{ category.category_name }} — Meros</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
@@ -708,8 +724,8 @@
 
   <main class="cat-page">
     <div class="cat-intro" data-reveal>
-      <h1 class="cat-intro-title">{{ category.category_name }}</h1>
-      {% if category.description %}<p class="cat-intro-desc">{{ category.description }}</p>{% endif %}
+      <h1 class="cat-intro-title" data-ru="{{ category.category_name }}" data-en="{{ category.category_name_en }}" data-uz="{{ category.category_name_uz }}">{{ category.category_name }}</h1>
+      {% if category.description %}<p class="cat-intro-desc" data-ru="{{ category.description }}" data-en="{{ category.description_eng }}" data-uz="{{ category.description_uz }}">{{ category.description }}</p>{% endif %}
     </div>
 
     <!-- ============================= FEATURED ============================= -->
@@ -720,10 +736,10 @@
           {% for p in products|slice:":6" %}
           <article class="cat-hero-slide">
             <div class="cat-hero-info">
-              <p class="cat-hero-cat">/ {{ category.category_name }}</p>
-              <h2 class="cat-hero-name">{{ p.name }}</h2>
-              <p class="cat-hero-desc">{{ p.desc|truncatewords:26 }}</p>
-              <p class="cat-hero-price">{{ p.price }} сум</p>
+              <p class="cat-hero-cat">/ <span data-ru="{{ category.category_name }}" data-en="{{ category.category_name_en }}" data-uz="{{ category.category_name_uz }}">{{ category.category_name }}</span></p>
+              <h2 class="cat-hero-name" data-ru="{{ p.name }}" data-en="{{ p.name_en }}" data-uz="{{ p.name_uz }}">{{ p.name }}</h2>
+              <p class="cat-hero-desc" data-ru="{{ p.desc|truncatewords:26 }}" data-en="{{ p.desc_en|truncatewords:26 }}" data-uz="{{ p.desc_uz|truncatewords:26 }}">{{ p.desc|truncatewords:26 }}</p>
+              <p class="cat-hero-price" data-price data-uzs="{{ p.price }}" data-usd="{{ p.price_usd }}" data-eur="{{ p.price_eur }}">{{ p.price }} сум</p>
               <a href="/shop/product/{{ p.id }}" class="cat-hero-buy">Купить</a>
             </div>
             <a href="/shop/product/{{ p.id }}" class="cat-hero-photo" tabindex="-1" aria-hidden="true">
@@ -752,11 +768,11 @@
         {% for p in products %}
         <a href="/shop/product/{{ p.id }}" class="cat-card" data-reveal>
           <span class="cat-card-frame">
-            {% if p.image.first %}<img src="{{ p.image.first.image.url }}" alt="{{ p.name }}" loading="lazy">{% endif %}
+            {% if p.image.first %}<img src="{{ p.image.first.image.url }}" alt="{{ p.name }}" data-alt-en="{{ p.name_en }}" data-alt-uz="{{ p.name_uz }}" loading="lazy">{% endif %}
           </span>
           <span class="cat-card-meta">
-            <span class="cat-card-name">{{ p.name }}</span>
-            <span class="cat-card-price">{{ p.price }} сум</span>
+            <span class="cat-card-name" data-ru="{{ p.name }}" data-en="{{ p.name_en }}" data-uz="{{ p.name_uz }}">{{ p.name }}</span>
+            <span class="cat-card-price" data-price data-uzs="{{ p.price }}" data-usd="{{ p.price_usd }}" data-eur="{{ p.price_eur }}">{{ p.price }} сум</span>
           </span>
         </a>
         {% endfor %}
@@ -933,6 +949,7 @@
   }
 })();
 </script>
+<script src="/static/js/meros-i18n.js?v=1" defer></script>
 <script src="/static/js/meros-polish.js" defer></script>
 </body>
 </html>

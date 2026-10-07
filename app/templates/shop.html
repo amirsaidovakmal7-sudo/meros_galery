@@ -3,6 +3,22 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>
+  /* Язык выбирается в меню (meros-i18n.js). Для ENG/UZB страница скрыта до
+     перевода, чтобы не мигал русский текст; через 2.5 с показывается в любом случае. */
+  (function () {
+    try {
+      var lang = window.localStorage.getItem('meros-siteLanguage');
+      if (lang === 'en' || lang === 'uz') {
+        var html = document.documentElement;
+        html.lang = lang;
+        html.classList.add('i18n-pending');
+        setTimeout(function () { html.classList.remove('i18n-pending'); }, 2500);
+      }
+    } catch (e) {}
+  })();
+</script>
+<style>html.i18n-pending body { visibility: hidden; }</style>
 <title>Магазин — Meros</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -782,7 +798,7 @@
       {% for c in product_categories %}
       {% if c.products_set.all %}
       <div class="shop-category-block" id="{{ c.category_name|slugify }}" data-reveal>
-        <h3 class="shop-category-name">{{ c.category_name }}</h3>
+        <h3 class="shop-category-name" data-ru="{{ c.category_name }}" data-en="{{ c.category_name_en }}" data-uz="{{ c.category_name_uz }}">{{ c.category_name }}</h3>
         <a href="/shop/category/{{ c.id }}" class="teaser-banner shop-category-banner">
           <div class="teaser-banner-media">
             <img src="{{ c.cover_url }}" alt="" loading="lazy">
@@ -800,7 +816,7 @@
               {% elif c.category_name == "Vintage" %}Смотреть Vintage
               {% elif c.category_name == "Secondhand" %}Смотреть Secondhand
               {% elif c.category_name == "Art" %}Смотреть Art
-              {% else %}Смотреть {{ c.category_name }}{% endif %}
+              {% else %}Смотреть <span data-ru="{{ c.category_name }}" data-en="{{ c.category_name_en }}" data-uz="{{ c.category_name_uz }}">{{ c.category_name }}</span>{% endif %}
             </span>
           </div>
         </a>
@@ -811,14 +827,14 @@
             <a href="/shop/product/{{ p.id }}" class="shop-carousel-item">
               <div class="shop-carousel-frame">
                 {% if p.image.first %}
-                <img src="{{ p.image.first.image.url }}" alt="{{ p.name }}">
+                <img src="{{ p.image.first.image.url }}" alt="{{ p.name }}" data-alt-en="{{ p.name_en }}" data-alt-uz="{{ p.name_uz }}">
                 {% else %}
                 <div class="ph ph--warm"></div>
                 {% endif %}
                 {% if p.status %}<span class="shop-carousel-status">{{ p.status }}</span>{% endif %}
               </div>
-              <p class="shop-carousel-name">{{ p.name }}</p>
-              <p class="shop-carousel-price">{{ p.price }} сум</p>
+              <p class="shop-carousel-name" data-ru="{{ p.name }}" data-en="{{ p.name_en }}" data-uz="{{ p.name_uz }}">{{ p.name }}</p>
+              <p class="shop-carousel-price" data-price data-uzs="{{ p.price }}" data-usd="{{ p.price_usd }}" data-eur="{{ p.price_eur }}">{{ p.price }} сум</p>
               <span class="link-arrow shop-carousel-link">Подробнее</span>
             </a>
             {% endfor %}
@@ -971,6 +987,7 @@
   }
 })();
 </script>
+<script src="/static/js/meros-i18n.js?v=1" defer></script>
 <script src="/static/js/meros-polish.js" defer></script>
 </body>
 </html>

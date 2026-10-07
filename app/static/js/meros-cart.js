@@ -2,6 +2,8 @@
   'use strict';
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var i18n = window.MerosI18n;
+  function tr(text) { return i18n ? i18n.t(text) : text; }
   var cartLink = document.getElementById('navCartLink');
   var cartBadge = document.getElementById('navCartBadge');
 
@@ -128,7 +130,6 @@
     var minus = form.querySelector('.qty-minus');
     var plus = form.querySelector('.qty-plus');
     var button = form.querySelector('[type="submit"]');
-    var idleLabel = button ? button.textContent : '';
 
     function clamp(v) {
       var max = parseInt(input.getAttribute('max'), 10) || 1;
@@ -144,6 +145,8 @@
       event.preventDefault();
       if (!button || button.getAttribute('aria-disabled') === 'true') return;
       button.setAttribute('aria-disabled', 'true');
+      // Read at click time: the language may have changed since the page loaded.
+      var idleLabel = button.textContent;
 
       var flight = fly(sourcePhoto(form));
       var request = fetch(form.action, {
@@ -158,10 +161,10 @@
 
       Promise.all([flight, request]).then(function (result) {
         land(result[1]);
-        setButton(button, 'Добавлено в корзину', 'added');
+        setButton(button, tr('Добавлено в корзину'), 'added');
       }).catch(function (error) {
         console.error('Не удалось добавить в корзину:', error);
-        setButton(button, 'Не удалось добавить', 'failed');
+        setButton(button, tr('Не удалось добавить'), 'failed');
       }).then(function () {
         setTimeout(function () {
           setButton(button, idleLabel, '');
@@ -171,29 +174,46 @@
     });
   });
 
-  /* ---------- cart page ---------- */
+  /* ---------- cart page ----------
+     Each row carries its unit price in every currency (data-uzs / data-usd /
+     data-eur) and the quantity (data-amount). Subtotals and the total are
+     shown in the currency chosen in the menu; nothing is converted. */
 
-  function digits(text) {
-    var d = String(text || '').replace(/[^\d]/g, '');
-    return d ? parseInt(d, 10) : NaN;
+  function money(amount) {
+    if (i18n) return i18n.formatMoney(amount);
+    return String(Math.round(amount)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0') + '\u00a0сум';
   }
-  function money(n) { return n.toLocaleString('ru-RU') + ' сум'; }
+  function unitPrice(row) {
+    if (i18n) return i18n.priceOf(row).amount;
+    var digits = String(row.getAttribute('data-uzs') || '').replace(/[^\d]/g, '');
+    return digits ? parseInt(digits, 10) : 0;
+  }
 
   var rows = document.querySelectorAll('.cart-row');
-  if (rows.length) {
+  function renderCart() {
     var total = 0;
+    var complete = true;
     rows.forEach(function (row) {
-      var unit = digits(row.getAttribute('data-price'));
+      var unit = unitPrice(row);
       var qty = parseInt(row.getAttribute('data-amount'), 10) || 0;
-      if (isNaN(unit)) return;
+      var subEl = row.querySelector('.cart-row-subtotal');
+      if (unit == null) {           // the price is text, not a number
+        complete = false;
+        if (subEl) subEl.textContent = '—';
+        return;
+      }
       var sub = unit * qty;
       total += sub;
-      var unitEl = row.querySelector('.cart-row-unit-price');
-      var subEl = row.querySelector('.cart-row-subtotal');
-      if (unitEl) unitEl.textContent = money(unit);
       if (subEl) subEl.textContent = money(sub);
     });
-    document.querySelectorAll('[data-cart-total]').forEach(function (el) { el.textContent = money(total); });
+    document.querySelectorAll('[data-cart-total]').forEach(function (el) {
+      el.textContent = complete ? money(total) : '—';
+    });
+  }
+
+  if (rows.length) {
+    renderCart();
+    document.addEventListener('meros:prefschange', renderCart);
 
     document.querySelectorAll('.cart-row-remove').forEach(function (link) {
       link.addEventListener('click', function (event) {

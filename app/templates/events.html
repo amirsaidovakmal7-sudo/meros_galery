@@ -3,6 +3,22 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>
+  /* Язык выбирается в меню (meros-i18n.js). Для ENG/UZB страница скрыта до
+     перевода, чтобы не мигал русский текст; через 2.5 с показывается в любом случае. */
+  (function () {
+    try {
+      var lang = window.localStorage.getItem('meros-siteLanguage');
+      if (lang === 'en' || lang === 'uz') {
+        var html = document.documentElement;
+        html.lang = lang;
+        html.classList.add('i18n-pending');
+        setTimeout(function () { html.classList.remove('i18n-pending'); }, 2500);
+      }
+    } catch (e) {}
+  })();
+</script>
+<style>html.i18n-pending body { visibility: hidden; }</style>
 <title>Ивенты и мастер-классы — Meros</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1098,22 +1114,22 @@
           <div class="story-carousel" data-carousel>
             <div class="story-carousel-track">
               {% for photo in e.image.all %}
-              <div class="story-carousel-slide"><img src="{{ photo.image.url }}" alt="{{ e.name }}"></div>
+              <div class="story-carousel-slide"><img src="{{ photo.image.url }}" alt="{{ e.name }}" data-alt-en="{{ e.name_en }}" data-alt-uz="{{ e.name_uz }}"></div>
               {% empty %}
               <div class="story-carousel-slide"><div class="ph ph--warm"></div></div>
               {% endfor %}
             </div>
             <div class="story-carousel-overlay">
               <div>
-                <h2 class="story-carousel-text">{{ e.name }}</h2>
+                <h2 class="story-carousel-text" data-ru="{{ e.name }}" data-en="{{ e.name_en }}" data-uz="{{ e.name_uz }}">{{ e.name }}</h2>
                 {% if e.allowed_amount <= 0 %}<span class="story-carousel-btn">SOLD OUT</span>{% endif %}
               </div>
             </div>
             <div class="story-carousel-dots"></div>
           </div>
           <div class="story-columns story-columns--single">
-            <p class="body">{{ e.desc }}</p>
-            {% if e.price %}<p class="date">{{ e.price }} сум / место</p>{% endif %}
+            <p class="body" data-ru="{{ e.desc }}" data-en="{{ e.desc_en }}" data-uz="{{ e.desc_uz }}">{{ e.desc }}</p>
+            {% if e.price %}<p class="date"><span data-price data-uzs="{{ e.price }}" data-usd="{{ e.price_usd }}" data-eur="{{ e.price_eur }}">{{ e.price }} сум</span> / место</p>{% endif %}
 
             {% if e.allowed_amount > 0 %}
             <form class="add-to-cart-form" data-item-id="{{ e.id }}" action="/add_to_cart_event/{{ e.id }}" method="post">
@@ -1140,22 +1156,22 @@
           <div class="story-carousel" data-carousel>
             <div class="story-carousel-track">
               {% for photo in m.image.all %}
-              <div class="story-carousel-slide"><img src="{{ photo.image.url }}" alt="{{ m.name }}"></div>
+              <div class="story-carousel-slide"><img src="{{ photo.image.url }}" alt="{{ m.name }}" data-alt-en="{{ m.name_en }}" data-alt-uz="{{ m.name_uz }}"></div>
               {% empty %}
               <div class="story-carousel-slide"><div class="ph ph--warm"></div></div>
               {% endfor %}
             </div>
             <div class="story-carousel-overlay">
               <div>
-                <h2 class="story-carousel-text">{{ m.name }}</h2>
+                <h2 class="story-carousel-text" data-ru="{{ m.name }}" data-en="{{ m.name_en }}" data-uz="{{ m.name_uz }}">{{ m.name }}</h2>
                 {% if m.allowed_amount <= 0 %}<span class="story-carousel-btn">SOLD OUT</span>{% endif %}
               </div>
             </div>
             <div class="story-carousel-dots"></div>
           </div>
           <div class="story-columns story-columns--single">
-            <p class="body">{{ m.desc }}</p>
-            <p class="date">{{ m.date }}, {{ m.time }} · Ведёт {{ m.tamada }} · {{ m.price }} сум</p>
+            <p class="body" data-ru="{{ m.desc }}" data-en="{{ m.desc_en }}" data-uz="{{ m.desc_uz }}">{{ m.desc }}</p>
+            <p class="date"><span data-date="{{ m.date|date:'Y-m-d' }}">{{ m.date }}</span>, {{ m.time }} · <span>Ведёт</span> <span data-ru="{{ m.tamada }}" data-en="{{ m.tamada_en }}" data-uz="{{ m.tamada_uz }}">{{ m.tamada }}</span> · <span data-price data-uzs="{{ m.price }}" data-usd="{{ m.price_usd }}" data-eur="{{ m.price_eur }}">{{ m.price }} сум</span></p>
 
             {% if m.allowed_amount > 0 %}
             <form class="add-to-cart-form" data-item-id="{{ m.id }}" action="/add_to_cart_masterclass/{{ m.id }}" method="post">
@@ -1444,6 +1460,7 @@
   }
 })();
 </script>
+<script src="/static/js/meros-i18n.js?v=1" defer></script>
 <script src="/static/js/meros-cart.js" defer></script>
 <script src="/static/js/meros-polish.js" defer></script>
 </body>

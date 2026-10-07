@@ -11,23 +11,7 @@
       if (marker) marker.textContent = String(index + 1).padStart(2, '0');
     });
 
-    var preferences = document.createElement('div');
-    preferences.className = 'meros-preferences';
-    preferences.innerHTML =
-      '<label>Язык<select id="siteLanguage" aria-label="Язык сайта"><option value="ru">RU</option><option value="en">ENG</option></select></label>' +
-      '<label>Валюта<select id="siteCurrency" aria-label="Валюта"><option>UZS</option><option>USD</option><option>EUR</option></select></label>';
-    menuLinks.insertAdjacentElement('afterend', preferences);
-
-    ['siteLanguage', 'siteCurrency'].forEach(function (id) {
-      var select = document.getElementById(id);
-      var key = 'meros-' + id;
-      var stored = window.localStorage.getItem(key);
-      if (stored) select.value = stored;
-      select.addEventListener('change', function () {
-        window.localStorage.setItem(key, select.value);
-        document.documentElement.setAttribute('data-' + id.replace('site', '').toLowerCase(), select.value);
-      });
-    });
+    /* The language and currency switcher is built by meros-i18n.js. */
 
     menu.addEventListener('click', function (event) {
       if (event.target !== menu) return;
@@ -168,7 +152,7 @@
       event.preventDefault();
       var submit = form.querySelector('[type="submit"]');
       if (!submit) return;
-      submit.textContent = 'Заявка подготовлена';
+      submit.textContent = window.MerosI18n ? window.MerosI18n.t('Заявка подготовлена') : 'Заявка подготовлена';
       submit.setAttribute('aria-live', 'polite');
     });
   });

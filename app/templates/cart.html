@@ -3,6 +3,22 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>
+  /* Язык выбирается в меню (meros-i18n.js). Для ENG/UZB страница скрыта до
+     перевода, чтобы не мигал русский текст; через 2.5 с показывается в любом случае. */
+  (function () {
+    try {
+      var lang = window.localStorage.getItem('meros-siteLanguage');
+      if (lang === 'en' || lang === 'uz') {
+        var html = document.documentElement;
+        html.lang = lang;
+        html.classList.add('i18n-pending');
+        setTimeout(function () { html.classList.remove('i18n-pending'); }, 2500);
+      }
+    } catch (e) {}
+  })();
+</script>
+<style>html.i18n-pending body { visibility: hidden; }</style>
 <title>Корзина — Meros</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -688,7 +704,7 @@
       <header class="cart-head">
         <p class="eyebrow">Ваш выбор</p>
         <h1 class="cart-title">Корзина</h1>
-        {% if cart %}<p class="cart-lede">Позиций: {{ cart|length }} · всего единиц: {{ cart_count }}</p>{% endif %}
+        {% if cart %}<p class="cart-lede"><span>Позиций</span>: {{ cart|length }} · <span>всего единиц</span>: {{ cart_count }}</p>{% endif %}
       </header>
 
       {% if cart %}
@@ -696,9 +712,9 @@
         <ul class="cart-list">
           {% for item in cart %}
           <li class="cart-row" data-amount="{{ item.user_amount }}"
-            {% if item.user_product %}data-price="{{ item.user_product.price }}"
-            {% elif item.user_masterclass %}data-price="{{ item.user_masterclass.price }}"
-            {% elif item.user_event %}data-price="{{ item.user_event.price }}"{% endif %}>
+            {% if item.user_product %}data-uzs="{{ item.user_product.price }}" data-usd="{{ item.user_product.price_usd }}" data-eur="{{ item.user_product.price_eur }}"
+            {% elif item.user_masterclass %}data-uzs="{{ item.user_masterclass.price }}" data-usd="{{ item.user_masterclass.price_usd }}" data-eur="{{ item.user_masterclass.price_eur }}"
+            {% elif item.user_event %}data-uzs="{{ item.user_event.price }}" data-usd="{{ item.user_event.price_usd }}" data-eur="{{ item.user_event.price_eur }}"{% endif %}>
 
             {% if item.user_product %}
             <a href="/shop/product/{{ item.user_product.id }}" class="cart-row-photo" tabindex="-1" aria-hidden="true">
@@ -706,9 +722,9 @@
             </a>
             <div class="cart-row-body">
               <p class="cart-row-type">Товар</p>
-              <a href="/shop/product/{{ item.user_product.id }}" class="cart-row-name">{{ item.user_product.name }}</a>
-              <p class="cart-row-desc">{{ item.user_product.desc }}</p>
-              <p class="cart-row-unit"><span class="cart-row-unit-price">{{ item.user_product.price }} сум</span> / шт.</p>
+              <a href="/shop/product/{{ item.user_product.id }}" class="cart-row-name" data-ru="{{ item.user_product.name }}" data-en="{{ item.user_product.name_en }}" data-uz="{{ item.user_product.name_uz }}">{{ item.user_product.name }}</a>
+              <p class="cart-row-desc" data-ru="{{ item.user_product.desc }}" data-en="{{ item.user_product.desc_en }}" data-uz="{{ item.user_product.desc_uz }}">{{ item.user_product.desc }}</p>
+              <p class="cart-row-unit"><span class="cart-row-unit-price" data-price data-uzs="{{ item.user_product.price }}" data-usd="{{ item.user_product.price_usd }}" data-eur="{{ item.user_product.price_eur }}">{{ item.user_product.price }} сум</span> / шт.</p>
             </div>
             {% elif item.user_event %}
             <a href="/events#event-{{ item.user_event.id }}" class="cart-row-photo" tabindex="-1" aria-hidden="true">
@@ -716,9 +732,9 @@
             </a>
             <div class="cart-row-body">
               <p class="cart-row-type">Ивент</p>
-              <a href="/events#event-{{ item.user_event.id }}" class="cart-row-name">{{ item.user_event.name }}</a>
-              <p class="cart-row-desc">{{ item.user_event.desc }}</p>
-              <p class="cart-row-unit"><span class="cart-row-unit-price">{{ item.user_event.price }} сум</span> / место</p>
+              <a href="/events#event-{{ item.user_event.id }}" class="cart-row-name" data-ru="{{ item.user_event.name }}" data-en="{{ item.user_event.name_en }}" data-uz="{{ item.user_event.name_uz }}">{{ item.user_event.name }}</a>
+              <p class="cart-row-desc" data-ru="{{ item.user_event.desc }}" data-en="{{ item.user_event.desc_en }}" data-uz="{{ item.user_event.desc_uz }}">{{ item.user_event.desc }}</p>
+              <p class="cart-row-unit"><span class="cart-row-unit-price" data-price data-uzs="{{ item.user_event.price }}" data-usd="{{ item.user_event.price_usd }}" data-eur="{{ item.user_event.price_eur }}">{{ item.user_event.price }} сум</span> / место</p>
             </div>
             {% elif item.user_masterclass %}
             <a href="/events#masterclass-{{ item.user_masterclass.id }}" class="cart-row-photo" tabindex="-1" aria-hidden="true">
@@ -726,9 +742,9 @@
             </a>
             <div class="cart-row-body">
               <p class="cart-row-type">Мастер-класс</p>
-              <a href="/events#masterclass-{{ item.user_masterclass.id }}" class="cart-row-name">{{ item.user_masterclass.name }}</a>
-              <p class="cart-row-desc">{{ item.user_masterclass.desc }}</p>
-              <p class="cart-row-unit"><span class="cart-row-unit-price">{{ item.user_masterclass.price }} сум</span> / место</p>
+              <a href="/events#masterclass-{{ item.user_masterclass.id }}" class="cart-row-name" data-ru="{{ item.user_masterclass.name }}" data-en="{{ item.user_masterclass.name_en }}" data-uz="{{ item.user_masterclass.name_uz }}">{{ item.user_masterclass.name }}</a>
+              <p class="cart-row-desc" data-ru="{{ item.user_masterclass.desc }}" data-en="{{ item.user_masterclass.desc_en }}" data-uz="{{ item.user_masterclass.desc_uz }}">{{ item.user_masterclass.desc }}</p>
+              <p class="cart-row-unit"><span class="cart-row-unit-price" data-price data-uzs="{{ item.user_masterclass.price }}" data-usd="{{ item.user_masterclass.price_usd }}" data-eur="{{ item.user_masterclass.price_eur }}">{{ item.user_masterclass.price }} сум</span> / место</p>
             </div>
             {% endif %}
 
@@ -886,6 +902,7 @@
   }
 })();
 </script>
+<script src="/static/js/meros-i18n.js?v=1" defer></script>
 <script src="/static/js/meros-cart.js" defer></script>
 <script src="/static/js/meros-polish.js" defer></script>
 </body>

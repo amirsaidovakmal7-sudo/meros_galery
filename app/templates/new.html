@@ -3,7 +3,23 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>{{ new.title }} — Meros</title>
+<script>
+  /* Язык выбирается в меню (meros-i18n.js). Для ENG/UZB страница скрыта до
+     перевода, чтобы не мигал русский текст; через 2.5 с показывается в любом случае. */
+  (function () {
+    try {
+      var lang = window.localStorage.getItem('meros-siteLanguage');
+      if (lang === 'en' || lang === 'uz') {
+        var html = document.documentElement;
+        html.lang = lang;
+        html.classList.add('i18n-pending');
+        setTimeout(function () { html.classList.remove('i18n-pending'); }, 2500);
+      }
+    } catch (e) {}
+  })();
+</script>
+<style>html.i18n-pending body { visibility: hidden; }</style>
+<title data-ru="{{ new.title }} — Meros" data-en="{% if new.title_en %}{{ new.title_en }} — Meros{% endif %}" data-uz="{% if new.title_uz %}{{ new.title_uz }} — Meros{% endif %}">{{ new.title }} — Meros</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
@@ -945,16 +961,16 @@
         <div class="story-carousel news-detail-photo" data-carousel>
           <div class="story-carousel-track">
             {% for photo in new.image.all %}
-            <div class="story-carousel-slide"><img src="{{ photo.image.url }}" alt="{{ new.title }}"></div>
+            <div class="story-carousel-slide"><img src="{{ photo.image.url }}" alt="{{ new.title }}" data-alt-en="{{ new.title_en }}" data-alt-uz="{{ new.title_uz }}"></div>
             {% empty %}
             <div class="story-carousel-slide"><div class="ph ph--warm"></div></div>
             {% endfor %}
           </div>
           <div class="story-carousel-dots"></div>
         </div>
-        <p class="date" style="margin-top:24px;">{{ new.date }}</p>
-        <h1 class="news-detail-title">{{ new.title }}</h1>
-        <div class="body-lg">{{ new.description|linebreaks }}</div>
+        <p class="date" style="margin-top:24px;" data-date="{{ new.date|date:'Y-m-d' }}">{{ new.date }}</p>
+        <h1 class="news-detail-title" data-ru="{{ new.title }}" data-en="{{ new.title_en }}" data-uz="{{ new.title_uz }}">{{ new.title }}</h1>
+        <div class="body-lg" data-i18n-block>{{ new.description|linebreaks }}<template data-lang="en">{{ new.description_en|linebreaks }}</template><template data-lang="uz">{{ new.description_uz|linebreaks }}</template></div>
       </div>
     </section>
 
@@ -1134,6 +1150,7 @@
   }
 })();
 </script>
+<script src="/static/js/meros-i18n.js?v=1" defer></script>
 <script src="/static/js/meros-polish.js" defer></script>
 </body>
 </html>

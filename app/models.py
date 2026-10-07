@@ -460,58 +460,62 @@ class Cart(models.Model):
     user_product = models.ForeignKey(Products, on_delete=models.CASCADE, null=True)
     user_event = models.ForeignKey(Events, on_delete=models.CASCADE, null=True)
     user_masterclass = models.ForeignKey(Masterclasses, on_delete=models.CASCADE, null=True)
-    choosed_amount = models.IntegerField(default=0)
+    user_amount = models.IntegerField(default=0)
+
+    @staticmethod
+    def _as_price(value):
+        # Price fields are text (so an empty '' is a valid "not set" value),
+        # so int() on a blank one must not blow up the whole page.
+        try:
+            parsed = int(value)
+        except (TypeError, ValueError):
+            return 0
+        return parsed if parsed > 0 else 0
 
     def calculate_final_product_price(self):
-        product_price = int(self.user_product.price) if int(self.user_product.price) > 0 else False
-        product_price_eur = int(self.user_event.price_eur) if int(self.user_product.price_eur) > 0 else False
-        product_price_usd = int(self.user_event.price_usd) if int(self.user_product.price_usd) > 0 else False
-        positive_quantity = self.choosed_amount if self.choosed_amount > 0 else False
-        if product_price:
-            calculated_price = product_price * positive_quantity
-            return calculated_price
-        elif product_price_eur:
-            calculated_price = product_price_eur * positive_quantity
-            return calculated_price
-        elif product_price_usd:
-            calculated_price = product_price_usd * positive_quantity
-            return calculated_price
-        else:
+        positive_quantity = self.user_amount if self.user_amount > 0 else False
+        if not positive_quantity:
             return False
+        product_price = self._as_price(self.user_product.price)
+        if product_price:
+            return product_price * positive_quantity
+        product_price_eur = self._as_price(self.user_product.price_eur)
+        if product_price_eur:
+            return product_price_eur * positive_quantity
+        product_price_usd = self._as_price(self.user_product.price_usd)
+        if product_price_usd:
+            return product_price_usd * positive_quantity
+        return False
 
     def calculate_event_price(self):
-        event_price = int(self.user_event.price) if int(self.user_event.price) > 0 else False
-        event_price_eur = int(self.user_event.price_eur) if int(self.user_event.price_eur) > 0 else False
-        event_price_usd = int(self.user_event.price_usd) if int(self.user_event.price_usd) > 0 else False
-        positive_quantity = self.choosed_amount if self.choosed_amount > 0 else False
-        if event_price:
-            calculated_price = event_price * positive_quantity
-            return calculated_price
-        elif event_price_eur:
-            calculated_price = event_price * positive_quantity
-            return calculated_price
-        if event_price_usd:
-            calculated_price = event_price * positive_quantity
-            return calculated_price
-        else:
+        positive_quantity = self.user_amount if self.user_amount > 0 else False
+        if not positive_quantity:
             return False
+        event_price = self._as_price(self.user_event.price)
+        if event_price:
+            return event_price * positive_quantity
+        event_price_eur = self._as_price(self.user_event.price_eur)
+        if event_price_eur:
+            return event_price_eur * positive_quantity
+        event_price_usd = self._as_price(self.user_event.price_usd)
+        if event_price_usd:
+            return event_price_usd * positive_quantity
+        return False
 
     def count_price_masterclass(self):
-        masterclass_price = int(self.user_masterclass.price) if int(self.user_masterclass.price) > 0 else False
-        masterclass_price_eur = int(self.user_masterclass.price_eur) if int(self.user_masterclass.price_eur) > 0 else False
-        masterclass_price_usd = int(self.user_masterclass.price_usd) if int(self.user_masterclass.price_usd) > 0 else False
-        positive_quantity = self.choosed_amount if self.choosed_amount > 0 else False
-        if masterclass_price:
-            calculated_price = masterclass_price * positive_quantity
-            return calculated_price
-        elif masterclass_price_eur:
-            calculated_price = masterclass_price_eur * positive_quantity
-            return calculated_price
-        if masterclass_price_usd:
-            calculated_price = masterclass_price_usd * positive_quantity
-            return calculated_price
-        else:
+        positive_quantity = self.user_amount if self.user_amount > 0 else False
+        if not positive_quantity:
             return False
+        masterclass_price = self._as_price(self.user_masterclass.price)
+        if masterclass_price:
+            return masterclass_price * positive_quantity
+        masterclass_price_eur = self._as_price(self.user_masterclass.price_eur)
+        if masterclass_price_eur:
+            return masterclass_price_eur * positive_quantity
+        masterclass_price_usd = self._as_price(self.user_masterclass.price_usd)
+        if masterclass_price_usd:
+            return masterclass_price_usd * positive_quantity
+        return False
 
 
 

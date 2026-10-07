@@ -3,6 +3,22 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>
+  /* Язык выбирается в меню (meros-i18n.js). Для ENG/UZB страница скрыта до
+     перевода, чтобы не мигал русский текст; через 2.5 с показывается в любом случае. */
+  (function () {
+    try {
+      var lang = window.localStorage.getItem('meros-siteLanguage');
+      if (lang === 'en' || lang === 'uz') {
+        var html = document.documentElement;
+        html.lang = lang;
+        html.classList.add('i18n-pending');
+        setTimeout(function () { html.classList.remove('i18n-pending'); }, 2500);
+      }
+    } catch (e) {}
+  })();
+</script>
+<style>html.i18n-pending body { visibility: hidden; }</style>
 <title>MEROS — Галерея наследия и ремесла</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -843,9 +859,9 @@
             <img src="{{ c.cover_url }}" alt="" loading="lazy">
           </div>
           <div class="teaser-banner-copy">
-            <h2 class="teaser-banner-name">{{ c.category_name }}</h2>
-            {% if c.description %}<p class="teaser-banner-desc">{{ c.description }}</p>{% endif %}
-            <span class="teaser-banner-cta">Shop {{ c.category_name }}</span>
+            <h2 class="teaser-banner-name" data-ru="{{ c.category_name }}" data-en="{{ c.category_name_en }}" data-uz="{{ c.category_name_uz }}">{{ c.category_name }}</h2>
+            {% if c.description %}<p class="teaser-banner-desc" data-ru="{{ c.description }}" data-en="{{ c.description_eng }}" data-uz="{{ c.description_uz }}">{{ c.description }}</p>{% endif %}
+            <span class="teaser-banner-cta">Shop <span data-ru="{{ c.category_name }}" data-en="{{ c.category_name_en }}" data-uz="{{ c.category_name_uz }}">{{ c.category_name }}</span></span>
           </div>
         </a>
 
@@ -856,13 +872,13 @@
             <a href="/shop/product/{{ p.id }}" class="shop-carousel-item">
               <div class="shop-carousel-frame">
                 {% if p.image.first %}
-                <img src="{{ p.image.first.image.url }}" alt="{{ p.name }}" loading="lazy">
+                <img src="{{ p.image.first.image.url }}" alt="{{ p.name }}" data-alt-en="{{ p.name_en }}" data-alt-uz="{{ p.name_uz }}" loading="lazy">
                 {% else %}
                 <div class="ph ph--warm"></div>
                 {% endif %}
               </div>
-              <p class="shop-carousel-name">{{ p.name }}</p>
-              <p class="shop-carousel-price">{{ p.price }} сум</p>
+              <p class="shop-carousel-name" data-ru="{{ p.name }}" data-en="{{ p.name_en }}" data-uz="{{ p.name_uz }}">{{ p.name }}</p>
+              <p class="shop-carousel-price" data-price data-uzs="{{ p.price }}" data-usd="{{ p.price_usd }}" data-eur="{{ p.price_eur }}">{{ p.price }} сум</p>
             </a>
             {% endfor %}
           </div>
@@ -909,7 +925,7 @@
           {% if n.image.first %}<img src="{{ n.image.first.image.url }}" alt="" loading="lazy">{% else %}<div class="ph ph--warm"></div>{% endif %}
           <span class="news-tile-body">
             <span class="news-tile-date">{{ n.date|date:"d.m.Y" }}</span>
-            <span class="news-tile-title">{{ n.title }}</span>
+            <span class="news-tile-title" data-ru="{{ n.title }}" data-en="{{ n.title_en }}" data-uz="{{ n.title_uz }}">{{ n.title }}</span>
             <span class="news-tile-more">Читать</span>
           </span>
         </a>
@@ -930,11 +946,11 @@
       <div class="feedback-tiles">
         {% for f in feedbacks|slice:":3" %}
         <figure class="feedback-tile" data-reveal style="margin:0;transition-delay:{{ forloop.counter0 }}00ms">
-          <blockquote class="feedback-tile-quote" style="margin:0">{{ f.text }}</blockquote>
+          <blockquote class="feedback-tile-quote" style="margin:0" data-ru="{{ f.text }}" data-en="{{ f.text_en }}" data-uz="{{ f.text_uz }}">{{ f.text }}</blockquote>
           {% if f.author_name %}
           <figcaption class="feedback-tile-author">
-            <span class="feedback-tile-name">{{ f.author_name }}</span>
-            {% if f.author_role %}<span class="feedback-tile-role">{{ f.author_role }}</span>{% endif %}
+            <span class="feedback-tile-name" data-ru="{{ f.author_name }}" data-en="{{ f.author_name_en }}" data-uz="{{ f.author_name_uz }}">{{ f.author_name }}</span>
+            {% if f.author_role %}<span class="feedback-tile-role" data-ru="{{ f.author_role }}" data-en="{{ f.author_role_en }}" data-uz="{{ f.author_role_uz }}">{{ f.author_role }}</span>{% endif %}
           </figcaption>
           {% endif %}
         </figure>
@@ -1156,6 +1172,7 @@
   }
 })();
 </script>
+<script src="/static/js/meros-i18n.js?v=1" defer></script>
 <script src="/static/js/meros-polish.js" defer></script>
 </body>
 </html>
