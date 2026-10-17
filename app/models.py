@@ -238,12 +238,12 @@ class Products(models.Model):
     desc = models.TextField('Описание продукта')
     desc_en = models.TextField('Описание продуктана англ')
     desc_uz = models.TextField('Описание продукта на узб ')
-    details = models.TextField('Особенности кроя и отделки')
-    details_en = models.TextField('Особенности кроя и отделки на англ ')
-    details_uz = models.TextField('Особенности кроя и отделки на узб')
-    carry = models.TextField('Рекомендации по уходу')
-    carry_en = models.TextField('Рекомендации по уходу на англ')
-    carry_uz = models.TextField('Рекомендации по уходу на узб')
+    details = models.TextField('Особенности кроя и отделки', blank=True)
+    details_en = models.TextField('Особенности кроя и отделки на англ ', blank=True)
+    details_uz = models.TextField('Особенности кроя и отделки на узб', blank=True)
+    carry = models.TextField('Рекомендации по уходу', blank=True)
+    carry_en = models.TextField('Рекомендации по уходу на англ', blank=True)
+    carry_uz = models.TextField('Рекомендации по уходу на узб', blank=True)
     product_category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE, default='')
 
     my_order = models.PositiveIntegerField(
