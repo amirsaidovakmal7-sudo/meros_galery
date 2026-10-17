@@ -989,16 +989,29 @@
   @media (min-width: 860px) { .product-detail-grid { grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; } }
   .product-gallery { position: relative; border-radius: 6px; background: var(--flax-deep); overflow: hidden; }
   .product-gallery .story-carousel-track { aspect-ratio: 4 / 5; min-height: 320px; }
-  .product-gallery .story-carousel-dot { background: rgba(28,26,22,0.25); }
-  .product-gallery .story-carousel-dot.is-active { background: var(--ink); }
-  .gallery-arrow {
+  /* Светлые точки и кнопки поверх фото товара (раньше были тёмные —
+     клиент попросил светлые, чтобы хорошо читались на любом фото). */
+  .product-gallery .story-carousel-dot {
+    background: rgba(255,255,255,0.6);
+    box-shadow: 0 0 0 1px rgba(28,26,22,0.15);
+  }
+  .product-gallery .story-carousel-dot.is-active {
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(28,26,22,0.22);
+  }
+  .gallery-arrow.gallery-arrow {
+    /* Двойной класс в селекторе поднимает специфичность выше, чем у
+       общего сброса `.meros-root button { background: none; }` —
+       без этого фон кнопки вообще не отрисовывался, оставалась видна
+       только тёмная стрелка без подложки. */
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: rgba(242,237,228,0.85);
+    background: rgba(255,255,255,0.88);
+    box-shadow: 0 1px 6px rgba(28,26,22,0.18);
     color: var(--ink);
     display: flex;
     align-items: center;
@@ -1006,7 +1019,7 @@
     transition: background 0.3s ease;
     z-index: 2;
   }
-  .gallery-arrow:hover { background: var(--flax); }
+  .gallery-arrow.gallery-arrow:hover { background: #fff; }
   .gallery-arrow--prev { left: 14px; }
   .gallery-arrow--next { right: 14px; }
   .news-detail-title {

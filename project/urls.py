@@ -15,10 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
-from django.conf.urls.static import static
 from django.http import HttpResponse
+from django.views.static import serve as serve_static_file
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +27,14 @@ urlpatterns = [
 ]
 
 
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# django.conf.urls.static.static() only registers these routes while
+# DEBUG=True — it is a no-op otherwise. This project has no separate
+# web server (nginx/whitenoise/etc.) serving /static/ or /media/, so with
+# DEBUG=False in settings.py (required for ALLOWED_HOSTS to work) every
+# photo and every static CSS/JS file 404ed, site-wide. Wiring the same
+# view in unconditionally keeps uploaded photos (and the site's own
+# styling) working regardless of DEBUG.
+urlpatterns += [
+    re_path(r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/'), serve_static_file, {'document_root': settings.STATIC_ROOT}),
+    re_path(r'^%s(?P<path>.*)$' % settings.MEDIA_URL.lstrip('/'), serve_static_file, {'document_root': settings.MEDIA_ROOT}),
+]
