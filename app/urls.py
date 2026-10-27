@@ -18,6 +18,8 @@ urlpatterns = [
     path('remove_from_cart_event/<int:pk>', views.remove_from_cart_event),
     path('remove_from_cart_masterclass/<int:pk>', views.remove_from_cart_masterclass),
 
-
+    path('oferta', views.offer_page),
+    path('privacy', views.privacy_page),
+    path('exchange-return', views.exchange_return_page),
 
 ]

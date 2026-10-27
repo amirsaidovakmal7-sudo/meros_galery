@@ -176,3 +176,18 @@ def cart_page(request):
     cart = Cart.objects.filter(session_key=session_key)
     context = {'cart': cart, 'cart_count': get_cart_count(request)}
     return render(request, 'cart.html', context)
+
+
+def offer_page(request):
+    context = {'cart_count': get_cart_count(request)}
+    return render(request, 'offer.html', context)
+
+
+def privacy_page(request):
+    context = {'cart_count': get_cart_count(request)}
+    return render(request, 'privacy.html', context)
+
+
+def exchange_return_page(request):
+    context = {'cart_count': get_cart_count(request)}
+    return render(request, 'exchange_return.html', context)
