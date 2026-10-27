@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>{% load photos %}
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
@@ -1062,7 +1062,7 @@
   .qty-soldout { font-size: 0.9rem; color: var(--terracotta); margin-bottom: 16px; }
 
 </style>
-<link rel="stylesheet" href="/static/css/meros-polish.css?v=2" />
+<link rel="stylesheet" href="/static/css/meros-polish.css?v=3" />
 <link rel="stylesheet" href="/static/css/meros-cart.css" />
 </head>
 <body class="meros-root">
@@ -1128,7 +1128,7 @@
         <div class="product-gallery" data-carousel data-reveal>
           <div class="story-carousel-track">
             {% for photo in product.image.all %}
-            <div class="story-carousel-slide"><img src="{{ photo.image.url }}" alt="{{ product.name }}" data-alt-en="{{ product.name_en }}" data-alt-uz="{{ product.name_uz }}"></div>
+            <div class="story-carousel-slide product-photo"><img src="{{ photo.image|card_url }}" alt="{{ product.name }}" data-alt-en="{{ product.name_en }}" data-alt-uz="{{ product.name_uz }}"></div>
             {% empty %}
             <div class="story-carousel-slide"><div class="ph ph--warm"></div></div>
             {% endfor %}
