@@ -380,45 +380,30 @@
   text-transform: uppercase;
 }
 
-.about-photo--history { aspect-ratio: 16 / 9; }
-.about-photo--history > img { object-position: 50% 52%; }
-.about-photo--history .about-photo-scrim {
+/* Every About chapter (История, Концепция, Философия, Направления,
+   Сообщество) repeats the "Наша история" composition — the client asked
+   for one style across all of them: a 16:9 photograph, the label and
+   heading in the bottom-left corner in dark ink over a soft light scrim,
+   two text columns below. Only the crop of each photograph differs. */
+.about-photo-chapter .about-photo { aspect-ratio: 16 / 9; }
+.about-photo-chapter .about-photo-scrim {
   background: linear-gradient(18deg, rgba(231,222,206,.9) 0%, rgba(231,222,206,.4) 24%, transparent 52%);
 }
-.about-photo--history .about-photo-heading {
+.about-photo-chapter .about-photo-heading {
   left: clamp(22px, 4.5vw, 72px);
   bottom: clamp(22px, 4vw, 62px);
   color: #211d18;
 }
-
-.about-photo--concept {
-  width: 88%;
-  margin-left: auto;
-  aspect-ratio: 16 / 9;
+/* Concept, philosophy and directions are dark photographs: the same light
+   wash has to be denser there, otherwise the dark heading sinks into them. */
+.about-photo--concept .about-photo-scrim,
+.about-photo--philosophy .about-photo-scrim,
+.about-photo--directions .about-photo-scrim {
+  background: linear-gradient(18deg, rgba(231,222,206,.94) 0%, rgba(231,222,206,.8) 28%, rgba(231,222,206,.42) 46%, transparent 66%);
 }
+.about-photo--history > img { object-position: 50% 52%; }
 .about-photo--concept > img { object-position: 54% 50%; }
-.about-photo--concept .about-photo-scrim {
-  background: linear-gradient(135deg, rgba(4,17,44,.72) 0%, rgba(4,17,44,.22) 31%, transparent 58%);
-}
-.about-photo--concept .about-photo-heading {
-  top: clamp(24px, 4vw, 58px);
-  left: clamp(22px, 4vw, 58px);
-}
-.about-photo--concept .about-photo-heading h2 { max-width: 9ch; }
-
-.meros-root #philosophy { padding-inline: 0; }
-.meros-root #philosophy .story-columns { padding-inline: clamp(20px, 6vw, 80px); }
-.about-photo--philosophy { min-height: 560px; aspect-ratio: 16 / 7.5; }
 .about-photo--philosophy > img { object-position: 46% 52%; }
-.about-photo--philosophy .about-photo-scrim {
-  background: linear-gradient(300deg, rgba(16,4,27,.72) 0%, rgba(16,4,27,.14) 36%, transparent 61%);
-}
-.about-photo--philosophy .about-photo-heading {
-  right: clamp(24px, 6vw, 94px);
-  bottom: clamp(28px, 6vw, 86px);
-  text-align: right;
-}
-.about-photo--philosophy .about-photo-heading h2 { max-width: 8ch; }
 
 /* Founder intentionally has no stand-in photograph. Emphasised as its own
    dark chapter, but pulled close to the quote that follows it — the client
@@ -511,38 +496,8 @@
   text-transform: uppercase;
 }
 
-.about-photo--directions {
-  width: 92%;
-  aspect-ratio: 16 / 9;
-}
 .about-photo--directions > img { object-position: 49% 50%; }
-.about-photo--directions .about-photo-scrim {
-  background: linear-gradient(112deg, rgba(0,35,38,.76) 0%, rgba(0,35,38,.18) 29%, transparent 53%);
-}
-.about-photo--directions .about-photo-heading {
-  top: clamp(28px, 5vw, 76px);
-  left: clamp(22px, 4vw, 62px);
-}
-.about-photo--directions .about-photo-heading h2 {
-  max-width: 10ch;
-  font-size: clamp(2.8rem, 6.5vw, 7rem);
-}
-
-.about-photo--community {
-  width: 87%;
-  margin-left: auto;
-  aspect-ratio: 16 / 9;
-}
 .about-photo--community > img { object-position: 50% 52%; }
-.about-photo--community .about-photo-scrim {
-  background: linear-gradient(325deg, rgba(229,222,209,.88) 0%, rgba(229,222,209,.28) 31%, transparent 55%);
-}
-.about-photo--community .about-photo-heading {
-  right: clamp(22px, 4vw, 62px);
-  bottom: clamp(22px, 4vw, 58px);
-  color: #201d19;
-  text-align: right;
-}
 
 @media (max-width: 700px) {
   .meros-root #story,
@@ -551,15 +506,10 @@
   .meros-root #what-we-do,
   .meros-root #community { padding: 42px 18px 54px; }
   .meros-root #story { padding-top: 0; }
-  .meros-root #philosophy .story-columns { padding-inline: 0; }
 
   .about-photo,
-  .about-photo--concept,
-  .about-photo--directions,
-  .about-photo--community {
-    width: 100%;
+  .about-photo-chapter .about-photo {
     min-height: 0;
-    margin-inline: 0;
     aspect-ratio: 4 / 5;
   }
   .about-photo-heading h2 { font-size: clamp(2.65rem, 13vw, 4.65rem); }
@@ -569,20 +519,13 @@
   .about-photo--directions > img { object-position: 47% center; }
   .about-photo--community > img { object-position: 51% center; }
 
-  .about-photo--history .about-photo-scrim {
+  .about-photo-chapter .about-photo-scrim {
     background: linear-gradient(20deg, rgba(231,222,206,.94), rgba(231,222,206,.28) 42%, transparent 64%);
   }
-  .about-photo--concept .about-photo-scrim {
-    background: linear-gradient(145deg, rgba(4,17,44,.82), rgba(4,17,44,.16) 52%, transparent 72%);
-  }
-  .about-photo--philosophy .about-photo-scrim {
-    background: linear-gradient(315deg, rgba(16,4,27,.78), rgba(16,4,27,.08) 58%, transparent 74%);
-  }
+  .about-photo--concept .about-photo-scrim,
+  .about-photo--philosophy .about-photo-scrim,
   .about-photo--directions .about-photo-scrim {
-    background: linear-gradient(125deg, rgba(0,35,38,.82), rgba(0,35,38,.08) 54%, transparent 72%);
-  }
-  .about-photo--community .about-photo-scrim {
-    background: linear-gradient(330deg, rgba(229,222,209,.92), rgba(229,222,209,.14) 49%, transparent 70%);
+    background: linear-gradient(20deg, rgba(231,222,206,.95), rgba(231,222,206,.82) 30%, rgba(231,222,206,.4) 50%, transparent 72%);
   }
 
   .founder-editorial-head { grid-template-columns: 1fr; gap: 24px; }
@@ -1308,11 +1251,9 @@ html { font-size: clamp(17px, 15.2px + .28vw, 19px); }
    Height now comes from the aspect ratio alone. */
 .about-photo,
 .about-photo--space,
-.about-photo--philosophy,
 .about-photo--quote { min-height: 0; }
 @media (min-width: 701px) and (max-width: 1100px) {
   .about-photo--quote { aspect-ratio: 4 / 3; }
-  .about-photo--philosophy { aspect-ratio: 16 / 9; }
 }
 
 /* Photo heroes with a centred title (shop, About): the title is always

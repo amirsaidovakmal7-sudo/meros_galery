@@ -343,6 +343,7 @@
      these strings — never database values — are written with innerHTML. */
   var HTML = {
     'about.history': ['Наша<br />история', 'Our<br />story', 'Bizning<br />tariximiz'],
+    'about.concept': ['Наша<br />концепция', 'Our<br />concept', 'Bizning<br />konsepsiyamiz'],
     'about.philosophy': ['Наша<br />философия', 'Our<br />philosophy', 'Bizning<br />falsafamiz'],
     'about.founder': ['Динара<br /><em>Кадырова</em>', 'Dinara<br /><em>Kadyrova</em>', 'Dinara<br /><em>Kadyrova</em>'],
     'about.directions': ['Четыре направления<br />одной идеи', 'Four directions<br />of one idea', 'Bitta g‘oyaning<br />to‘rt yo‘nalishi']
