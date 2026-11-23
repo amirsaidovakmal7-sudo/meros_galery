@@ -174,3 +174,48 @@ class SitePhotoAdmin(admin.ModelAdmin):
 
 
 
+
+
+@admin.register(InstagramPost)
+class InstagramPostAdmin(admin.ModelAdmin):
+    """5 фиксированных карточек в блоке Instagram на главной: меняются ссылка и фото/видео."""
+    list_display = ['preview_small', '__str__', 'link', 'kind']
+    list_display_links = ['preview_small', '__str__']
+    fields = ['preview', 'link', 'media']
+    readonly_fields = ['preview']
+
+    def changelist_view(self, request, extra_context=None):
+        site_photos.ensure_instagram_posts()
+        return super().changelist_view(request, extra_context)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def _card(self, obj):
+        return site_photos.instagram_posts()[obj.position - 1]
+
+    def _media_html(self, obj, style):
+        card = self._card(obj)
+        if card['is_video']:
+            return format_html('<video src="{}" style="{}" muted autoplay loop playsinline></video>', card['url'], style)
+        return format_html('<img src="{}" style="{}">', card['url'], style)
+
+    @admin.display(description='Превью')
+    def preview_small(self, obj):
+        return self._media_html(obj, 'width:64px;height:80px;object-fit:cover;border-radius:6px;display:block')
+
+    @admin.display(description='Сейчас на сайте')
+    def preview(self, obj):
+        label = ('Загруженное видео' if obj.is_video else 'Загруженное фото') if obj.media else 'Стандартное фото сайта'
+        return format_html('{}<div style="margin-top:6px;color:#666">{}</div>',
+                           self._media_html(obj, 'width:240px;aspect-ratio:4/5;object-fit:cover;border-radius:10px;display:block'),
+                           label)
+
+    @admin.display(description='Тип')
+    def kind(self, obj):
+        if not obj.media:
+            return '—'
+        return 'Видео' if obj.is_video else 'Фото'

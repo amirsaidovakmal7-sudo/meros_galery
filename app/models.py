@@ -483,20 +483,54 @@ class SitePhoto(models.Model):
     def save(self, *args, **kwargs):
         from app import site_photos
 
-        old = None
-        if self.pk:
-            old = SitePhoto.objects.filter(pk=self.pk).values_list('image', flat=True).first()
-        new_upload = self.image and not getattr(self.image, '_committed', True)
-        if new_upload:
-            smaller = site_photos.shrink(self.image)
-            if smaller is not None:
-                self.image.save(smaller.name, smaller, save=False)
+        old = site_photos.prepare_upload(self, 'image')
         super().save(*args, **kwargs)
-        # Старый файл больше нигде не используется — удаляем, чтобы не копился мусор.
-        if old and old != self.image.name:
-            storage = self._meta.get_field('image').storage
-            if storage.exists(old):
-                storage.delete(old)
+        site_photos.delete_replaced(self, 'image', old)
+
+
+def validate_instagram_media(file):
+    from app import site_photos
+
+    site_photos.validate_media(file)
+
+
+class InstagramPost(models.Model):
+    """Один из 5 постов в блоке Instagram внизу главной."""
+    position = models.PositiveSmallIntegerField('Пост №', unique=True, editable=False)
+    link = models.URLField(
+        'Ссылка на пост',
+        blank=True,
+        help_text='Например https://www.instagram.com/p/… Без ссылки карточка показывается, но не кликается.',
+    )
+    media = models.FileField(
+        'Фото или видео',
+        upload_to='instagram',
+        blank=True,
+        validators=[validate_instagram_media],
+        help_text='Фото (JPG, PNG, WebP) или видео (MP4, MOV, WebM, до 50 МБ). Видео на сайте играет '
+                  'по кругу без звука. Если ничего не загружено — показывается стандартное фото сайта.',
+    )
+
+    class Meta:
+        verbose_name = 'Instagram-пост'
+        verbose_name_plural = 'Instagram-посты'
+        ordering = ['position']
+
+    def __str__(self):
+        return f'Пост {self.position}'
+
+    @property
+    def is_video(self):
+        from app import site_photos
+
+        return bool(self.media) and site_photos.is_video(self.media.name)
+
+    def save(self, *args, **kwargs):
+        from app import site_photos
+
+        old = site_photos.prepare_upload(self, 'media', max_side=site_photos.INSTAGRAM_MAX_SIDE)
+        super().save(*args, **kwargs)
+        site_photos.delete_replaced(self, 'media', old)
 
 
 class Cart(models.Model):

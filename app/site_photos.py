@@ -24,7 +24,6 @@ PAGES = [(HOME, 'Главная'), (ABOUT, 'О нас')]
 
 WIDE = 'Горизонтальное, широкое (примерно 16:9). Края по бокам могут обрезаться.'
 HERO = 'Горизонтальное, на весь экран. Главный объект лучше держать ближе к центру.'
-VERTICAL = 'Вертикальное (примерно 4:5).'
 
 # (ключ, страница, название в админке, картинка по умолчанию, подсказка)
 SLOTS = [
@@ -34,11 +33,6 @@ SLOTS = [
      'Квадратное (1:1).'),
     ('home_events', HOME, 'Главная — баннер Events & Masterclasses', 'comunity.webp',
      'Горизонтальное, очень широкое (примерно 16:7). На телефоне показывается вертикально, по центру.'),
-    ('home_instagram_1', HOME, 'Главная — Instagram, фото 1', 'about-hero.jpg', VERTICAL),
-    ('home_instagram_2', HOME, 'Главная — Instagram, фото 2', 'comunity.webp', VERTICAL),
-    ('home_instagram_3', HOME, 'Главная — Instagram, фото 3', 'direction.webp', VERTICAL),
-    ('home_instagram_4', HOME, 'Главная — Instagram, фото 4', 'quote.jpg', VERTICAL),
-    ('home_instagram_5', HOME, 'Главная — Instagram, фото 5', 'comunity.jpg', VERTICAL),
 
     ('about_hero', ABOUT, 'О нас — заглавный экран', 'about-hero.jpg', HERO),
     ('about_history', ABOUT, 'О нас — Наша история', 'ourhistory.jpg', WIDE),
@@ -64,6 +58,14 @@ SLOTS = [
 
 SLOT_BY_KEY = {slot[0]: slot for slot in SLOTS}
 KEYS = list(SLOT_BY_KEY)
+
+# Блок Instagram внизу главной: 5 постов (модель InstagramPost).
+# Картинки по умолчанию — пока пост не загружен.
+INSTAGRAM_DEFAULTS = ['about-hero.jpg', 'comunity.webp', 'direction.webp', 'quote.jpg', 'comunity.jpg']
+INSTAGRAM_MAX_SIDE = 1080  # карточки маленькие, 1080 px хватает с запасом
+IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+VIDEO_EXTENSIONS = {'mp4', 'mov', 'm4v', 'webm'}
+VIDEO_MAX_BYTES = 50 * 1024 * 1024
 
 # Загруженное фото уменьшается до этого размера по длинной стороне:
 # хватает на весь экран retina-ноутбука, а файл с телефона на 10-20 МБ
@@ -103,8 +105,72 @@ def urls(page=None):
     return result
 
 
-def shrink(image_field):
-    """Уменьшает только что загруженное фото до MAX_SIDE и сохраняет как JPEG.
+def extension(name):
+    return os.path.splitext(name)[1].lower().lstrip('.')
+
+
+def is_video(name):
+    return extension(name) in VIDEO_EXTENSIONS
+
+
+def validate_media(file):
+    from django.core.exceptions import ValidationError
+
+    ext = extension(file.name)
+    if ext not in IMAGE_EXTENSIONS | VIDEO_EXTENSIONS:
+        raise ValidationError('Нужно фото (JPG, PNG, WebP) или видео (MP4, MOV, WebM).')
+    if ext in VIDEO_EXTENSIONS and file.size > VIDEO_MAX_BYTES:
+        raise ValidationError('Видео больше 50 МБ — сократите или сожмите его (лучше всего — короткий MP4).')
+
+
+def ensure_instagram_posts():
+    from app.models import InstagramPost
+
+    existing = set(InstagramPost.objects.values_list('position', flat=True))
+    for position in range(1, len(INSTAGRAM_DEFAULTS) + 1):
+        if position not in existing:
+            InstagramPost.objects.create(position=position)
+
+
+def instagram_posts():
+    """5 карточек для шаблона: url файла, видео или нет, ссылка на пост."""
+    from app.models import InstagramPost
+
+    saved = {p.position: p for p in InstagramPost.objects.all()}
+    posts = []
+    for position, default in enumerate(INSTAGRAM_DEFAULTS, 1):
+        post = saved.get(position)
+        if post and post.media:
+            posts.append({'url': post.media.url, 'is_video': post.is_video, 'link': post.link})
+        else:
+            posts.append({'url': '/static/media/' + default, 'is_video': False,
+                          'link': post.link if post else ''})
+    return posts
+
+
+def prepare_upload(instance, field, max_side=None):
+    """Перед сохранением: уменьшает новое загруженное фото и возвращает
+    имя старого файла, чтобы после сохранения удалить его."""
+    old = None
+    if instance.pk:
+        old = type(instance).objects.filter(pk=instance.pk).values_list(field, flat=True).first()
+    file = getattr(instance, field)
+    if file and not getattr(file, '_committed', True) and not is_video(file.name):
+        smaller = shrink(file, max_side or MAX_SIDE)
+        if smaller is not None:
+            file.save(smaller.name, smaller, save=False)
+    return old
+
+
+def delete_replaced(instance, field, old):
+    """Старый файл больше нигде не используется — удаляем, чтобы не копился мусор."""
+    file = getattr(instance, field)
+    if old and old != file.name and file.storage.exists(old):
+        file.storage.delete(old)
+
+
+def shrink(image_field, max_side=MAX_SIDE):
+    """Уменьшает только что загруженное фото до max_side и сохраняет как JPEG.
 
     Возвращает ContentFile для записи в поле или None, если фото и так
     небольшое или его не удалось прочитать (тогда остаётся оригинал)."""
@@ -113,7 +179,7 @@ def shrink(image_field):
         with Image.open(image_field) as src:
             src.load()
             im = ImageOps.exif_transpose(src)
-            if max(im.size) <= MAX_SIDE and getattr(image_field, 'size', 0) <= 1.5 * 1024 * 1024:
+            if max(im.size) <= max_side and getattr(image_field, 'size', 0) <= 1.5 * 1024 * 1024:
                 return None
             if im.mode in ('RGBA', 'LA', 'P'):
                 im = im.convert('RGBA')
@@ -122,7 +188,7 @@ def shrink(image_field):
                 im = canvas
             else:
                 im = im.convert('RGB')
-            im.thumbnail((MAX_SIDE, MAX_SIDE), Image.LANCZOS)
+            im.thumbnail((max_side, max_side), Image.LANCZOS)
             buf = BytesIO()
             im.save(buf, 'JPEG', quality=JPEG_QUALITY, optimize=True, progressive=True)
     except Exception:

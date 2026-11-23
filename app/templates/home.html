@@ -633,6 +633,14 @@
     align-items: center;
     justify-content: center;
   }
+  .instagram-item-frame > video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: var(--ink, #1c1a16);
+  }
   .instagram-meta {
     margin-top: 10px;
     display: flex;
@@ -967,46 +975,20 @@
       </div>
 
       <div class="instagram-strip" data-reveal>
-        <a href="#" class="instagram-item">
+        {% for post in instagram_posts %}
+        {% if post.link %}<a href="{{ post.link }}" class="instagram-item" target="_blank" rel="noopener" aria-label="Пост в Instagram">{% else %}<div class="instagram-item">{% endif %}
           <div class="instagram-item-frame">
-            <img src="{{ photos.home_instagram_1 }}" alt="" loading="lazy">
+            {% if post.is_video %}
+            <video src="{{ post.url }}" muted autoplay loop playsinline preload="metadata" aria-hidden="true" tabindex="-1" disablepictureinpicture disableremoteplayback></video>
+            {% else %}
+            <img src="{{ post.url }}" alt="" loading="lazy">
+            {% endif %}
             <span class="instagram-badge" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
             </span>
           </div>
-        </a>
-        <a href="#" class="instagram-item">
-          <div class="instagram-item-frame">
-            <img src="{{ photos.home_instagram_2 }}" alt="" loading="lazy">
-            <span class="instagram-badge" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
-            </span>
-          </div>
-        </a>
-        <a href="#" class="instagram-item">
-          <div class="instagram-item-frame">
-            <img src="{{ photos.home_instagram_3 }}" alt="" loading="lazy">
-            <span class="instagram-badge" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
-            </span>
-          </div>
-        </a>
-        <a href="#" class="instagram-item">
-          <div class="instagram-item-frame">
-            <img src="{{ photos.home_instagram_4 }}" alt="" loading="lazy">
-            <span class="instagram-badge" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
-            </span>
-          </div>
-        </a>
-        <a href="#" class="instagram-item">
-          <div class="instagram-item-frame">
-            <img src="{{ photos.home_instagram_5 }}" alt="" loading="lazy">
-            <span class="instagram-badge" aria-hidden="true">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
-            </span>
-          </div>
-        </a>
+        {% if post.link %}</a>{% else %}</div>{% endif %}
+        {% endfor %}
       </div>
       </section>
   </main>
@@ -1132,6 +1114,16 @@
     }
   }
 
+  /* ---------- instagram videos: silent loops, paused with reduced motion ---------- */
+  document.querySelectorAll('.instagram-item-frame video').forEach(function (video) {
+    video.defaultMuted = true;
+    video.muted = true;
+    if (prefersReduced) {
+      video.removeAttribute('autoplay');
+      video.pause();
+    }
+  });
+
   /* ---------- reveal-on-scroll ---------- */
   var revealEls = document.querySelectorAll('[data-reveal]');
   if (prefersReduced) {
@@ -1178,7 +1170,7 @@
   }
 })();
 </script>
-<script src="/static/js/meros-i18n.js?v=2" defer></script>
+<script src="/static/js/meros-i18n.js?v=3" defer></script>
 <script src="/static/js/meros-polish.js" defer></script>
 </body>
 </html>

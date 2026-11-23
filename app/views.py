@@ -28,7 +28,7 @@ def home_page(request):
     events = Events.objects.all()
     masterclasses = Masterclasses.objects.all()
     feedbacks = Feedbacks.objects.all()
-    context = {'news': news, 'categories': product_categories, 'products': products, 'events': events, 'masterclasses': masterclasses, 'feedbacks': feedbacks, 'photos': site_photos.urls(site_photos.HOME), 'cart_count': get_cart_count(request)}
+    context = {'news': news, 'categories': product_categories, 'products': products, 'events': events, 'masterclasses': masterclasses, 'feedbacks': feedbacks, 'photos': site_photos.urls(site_photos.HOME), 'instagram_posts': site_photos.instagram_posts(), 'cart_count': get_cart_count(request)}
     return render(request, 'home.html', context)
 
 

@@ -137,3 +137,136 @@ class SitePhotoTests(TestCase):
         photo.refresh_from_db()
         self.assertFalse(photo.image)
         self.assertEqual(site_photos.urls()['home_events'], '/static/media/comunity.webp')
+
+
+from django.core.exceptions import ValidationError
+
+from app.models import InstagramPost
+
+
+def video_upload(name='clip.mp4', size=2048):
+    return SimpleUploadedFile(name, b'\x00' * size, content_type='video/mp4')
+
+
+class InstagramPostTests(TestCase):
+    def setUp(self):
+        self.media = tempfile.mkdtemp()
+        self.override = override_settings(MEDIA_ROOT=self.media)
+        self.override.enable()
+
+    def tearDown(self):
+        self.override.disable()
+        shutil.rmtree(self.media, ignore_errors=True)
+
+    def test_migration_created_five_posts_with_defaults(self):
+        self.assertEqual(InstagramPost.objects.count(), 5)
+        posts = site_photos.instagram_posts()
+        self.assertEqual([p['url'] for p in posts],
+                         ['/static/media/' + f for f in site_photos.INSTAGRAM_DEFAULTS])
+        self.assertFalse(any(p['link'] or p['is_video'] for p in posts))
+
+    def test_instagram_slots_removed_from_site_photos(self):
+        self.assertFalse(any(k.startswith('home_instagram') for k in site_photos.KEYS))
+
+    def test_home_renders_link_photo_and_video(self):
+        first = InstagramPost.objects.get(position=1)
+        first.link = 'https://www.instagram.com/p/ABC123/'
+        first.media = video_upload()
+        first.save()
+        second = InstagramPost.objects.get(position=2)
+        second.media = upload()
+        second.save()
+        html = self.client.get('/').content.decode()
+        strip = html.split('class="instagram-strip"')[1].split('</section>')[0]
+        self.assertIn('href="https://www.instagram.com/p/ABC123/"', strip)
+        self.assertIn(f'<video src="{first.media.url}"', strip)
+        self.assertIn(f'<img src="{second.media.url}"', strip)
+        self.assertEqual(strip.count('<a href='), 1)  # без ссылки карточка не кликается
+        self.assertEqual(strip.count('class="instagram-item"'), 5)
+
+    def test_video_is_not_reencoded_and_image_is_shrunk(self):
+        post = InstagramPost.objects.get(position=3)
+        post.media = video_upload(size=4096)
+        post.save()
+        self.assertEqual(post.media.size, 4096)
+        post.media = upload((3000, 3000))
+        post.save()
+        with Image.open(post.media.path) as im:
+            self.assertEqual(im.size, (site_photos.INSTAGRAM_MAX_SIDE,) * 2)
+
+    def test_validation(self):
+        site_photos.validate_media(video_upload('a.MOV'))
+        site_photos.validate_media(upload(name='a.webp'))
+        with self.assertRaises(ValidationError):
+            site_photos.validate_media(SimpleUploadedFile('a.pdf', b'x'))
+        big = video_upload()
+        big.size = site_photos.VIDEO_MAX_BYTES + 1
+        with self.assertRaises(ValidationError):
+            site_photos.validate_media(big)
+
+    def test_admin_change_link_and_media(self):
+        from django.contrib.auth.models import User
+        self.client.force_login(User.objects.create_superuser('a', 'a@a.a', 'p'))
+        self.assertContains(self.client.get('/admin/app/instagrampost/'), 'Пост 1')
+        post = InstagramPost.objects.get(position=4)
+        url = f'/admin/app/instagrampost/{post.pk}/change/'
+        response = self.client.post(url, {'link': 'https://www.instagram.com/reel/XYZ/', 'media': video_upload()})
+        self.assertEqual(response.status_code, 302)
+        post.refresh_from_db()
+        self.assertTrue(post.is_video)
+        self.assertEqual(post.link, 'https://www.instagram.com/reel/XYZ/')
+        bad = self.client.post(url, {'link': 'не ссылка'})
+        self.assertEqual(bad.status_code, 200)  # форма с ошибкой
+
+
+class RangeServeTests(SimpleTestCase):
+    def setUp(self):
+        self.root = tempfile.mkdtemp()
+        with open(os.path.join(self.root, 'v.mp4'), 'wb') as f:
+            f.write(bytes(range(256)) * 4)  # 1024 байта
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def get(self, path='v.mp4', range_header=None):
+        from django.test import RequestFactory
+        from app.media_serve import serve_with_range
+        extra = {'HTTP_RANGE': range_header} if range_header else {}
+        request = RequestFactory().get('/media/' + path, **extra)
+        return serve_with_range(request, path, document_root=self.root)
+
+    def body(self, response):
+        data = b''.join(response.streaming_content)
+        response.close()
+        return data
+
+    def test_full_file_advertises_ranges(self):
+        response = self.get()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Accept-Ranges'], 'bytes')
+        self.assertEqual(len(self.body(response)), 1024)
+
+    def test_partial(self):
+        response = self.get(range_header='bytes=0-1')
+        self.assertEqual(response.status_code, 206)
+        self.assertEqual(response['Content-Range'], 'bytes 0-1/1024')
+        self.assertEqual(response['Content-Length'], '2')
+        self.assertEqual(self.body(response), bytes([0, 1]))
+
+    def test_open_ended_and_suffix(self):
+        response = self.get(range_header='bytes=1000-')
+        self.assertEqual(response['Content-Range'], 'bytes 1000-1023/1024')
+        self.assertEqual(len(self.body(response)), 24)
+        response = self.get(range_header='bytes=-4')
+        self.assertEqual(response['Content-Range'], 'bytes 1020-1023/1024')
+        self.assertEqual(self.body(response), bytes([252, 253, 254, 255]))
+
+    def test_unsatisfiable(self):
+        response = self.get(range_header='bytes=5000-')
+        self.assertEqual(response.status_code, 416)
+        self.assertEqual(response['Content-Range'], 'bytes */1024')
+
+    def test_missing_file_is_404(self):
+        from django.http import Http404
+        with self.assertRaises(Http404):
+            self.get('nope.mp4', 'bytes=0-1')

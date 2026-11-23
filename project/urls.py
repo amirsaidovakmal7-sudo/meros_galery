@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.http import HttpResponse
-from django.views.static import serve as serve_static_file
+from app.media_serve import serve_with_range as serve_static_file
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,7 +33,8 @@ urlpatterns = [
 # DEBUG=False in settings.py (required for ALLOWED_HOSTS to work) every
 # photo and every static CSS/JS file 404ed, site-wide. Wiring the same
 # view in unconditionally keeps uploaded photos (and the site's own
-# styling) working regardless of DEBUG.
+# styling) working regardless of DEBUG. serve_with_range also answers
+# Range requests, without which Safari refuses to play videos.
 urlpatterns += [
     re_path(r'^%s(?P<path>.*)$' % settings.STATIC_URL.lstrip('/'), serve_static_file, {'document_root': settings.STATIC_ROOT}),
     re_path(r'^%s(?P<path>.*)$' % settings.MEDIA_URL.lstrip('/'), serve_static_file, {'document_root': settings.MEDIA_ROOT}),

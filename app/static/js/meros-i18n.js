@@ -103,6 +103,7 @@
     'Отзывы': ['Reviews', 'Sharhlar'],
     'Что говорят гости и коллекционеры': ['What guests and collectors say', 'Mehmonlar va kolleksionerlar fikri'],
     'Подпишитесь на нас в Instagram': ['Follow us on Instagram', 'Bizni Instagram’da kuzatib boring'],
+    'Пост в Instagram': ['Instagram post', 'Instagram’dagi post'],
     'Ежедневное вдохновение и закулисье мастерских — ближе, чем в галерее.': [
       'Daily inspiration and a look behind the scenes of the workshops — closer than in the gallery.',
       'Har kungi ilhom va ustaxonalarning sahna ortidagi hayoti — galereyadagidan ham yaqinroq.'
