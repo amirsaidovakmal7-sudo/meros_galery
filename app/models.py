@@ -1,5 +1,7 @@
 from django.db import models
 
+from app.site_photos import PAGES as SITE_PHOTO_PAGES
+
 
 
 
@@ -453,6 +455,48 @@ class WorkersImage(models.Model):
         verbose_name = "Фото рабочего"
         verbose_name_plural = "Фотки рабочего"
         ordering = ['my_order']
+
+
+class SitePhoto(models.Model):
+    """Фото в фиксированном месте страницы (баннеры, разделы «О нас» и т.д.).
+    Список мест — app/site_photos.py; строки создаются автоматически."""
+    key = models.CharField(max_length=64, unique=True, editable=False)
+    page = models.CharField('Страница', max_length=16, choices=SITE_PHOTO_PAGES, editable=False)
+    title = models.CharField('Место на сайте', max_length=128, editable=False)
+    image = models.ImageField(
+        'Фото',
+        upload_to='site',
+        blank=True,
+        help_text='Если не загружено — показывается стандартное фото сайта. '
+                  'Чтобы вернуть стандартное, отметьте «Очистить» и сохраните.',
+    )
+    my_order = models.PositiveIntegerField(default=0, editable=False)
+
+    class Meta:
+        verbose_name = 'Фото на странице'
+        verbose_name_plural = 'Фото на страницах'
+        ordering = ['my_order']
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        from app import site_photos
+
+        old = None
+        if self.pk:
+            old = SitePhoto.objects.filter(pk=self.pk).values_list('image', flat=True).first()
+        new_upload = self.image and not getattr(self.image, '_committed', True)
+        if new_upload:
+            smaller = site_photos.shrink(self.image)
+            if smaller is not None:
+                self.image.save(smaller.name, smaller, save=False)
+        super().save(*args, **kwargs)
+        # Старый файл больше нигде не используется — удаляем, чтобы не копился мусор.
+        if old and old != self.image.name:
+            storage = self._meta.get_field('image').storage
+            if storage.exists(old):
+                storage.delete(old)
 
 
 class Cart(models.Model):

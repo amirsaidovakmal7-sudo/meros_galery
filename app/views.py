@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.db import models
 from .models import *
+from . import site_photos
 
 
 
@@ -27,13 +28,13 @@ def home_page(request):
     events = Events.objects.all()
     masterclasses = Masterclasses.objects.all()
     feedbacks = Feedbacks.objects.all()
-    context = {'news': news, 'categories': product_categories, 'products': products, 'events': events, 'masterclasses': masterclasses, 'feedbacks': feedbacks, 'cart_count': get_cart_count(request)}
+    context = {'news': news, 'categories': product_categories, 'products': products, 'events': events, 'masterclasses': masterclasses, 'feedbacks': feedbacks, 'photos': site_photos.urls(site_photos.HOME), 'cart_count': get_cart_count(request)}
     return render(request, 'home.html', context)
 
 
 def about_page(request):
     workers = Workers.objects.all()
-    context = {'workers': workers, 'cart_count': get_cart_count(request)}
+    context = {'workers': workers, 'photos': site_photos.urls(site_photos.ABOUT), 'cart_count': get_cart_count(request)}
     return render(request, 'about.html', context)
 
 

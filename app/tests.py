@@ -1,3 +1,4 @@
+import os
 from django.test import SimpleTestCase
 from PIL import Image, ImageDraw
 
@@ -42,3 +43,97 @@ class NormalizeTests(SimpleTestCase):
         name = product_photos.card_name('media/чайник.png')
         self.assertTrue(name.startswith('cards/чайник-'))
         self.assertTrue(name.endswith('.webp'))
+
+
+import shutil
+import tempfile
+from io import BytesIO
+
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase, override_settings
+
+from app import site_photos
+from app.models import SitePhoto
+
+
+def upload(size=(800, 600), name='photo.png', fmt='PNG'):
+    buf = BytesIO()
+    Image.new('RGB', size, (200, 120, 60)).save(buf, fmt)
+    return SimpleUploadedFile(name, buf.getvalue())
+
+
+class SitePhotoTests(TestCase):
+    def setUp(self):
+        self.media = tempfile.mkdtemp()
+        self.override = override_settings(MEDIA_ROOT=self.media)
+        self.override.enable()
+
+    def tearDown(self):
+        self.override.disable()
+        shutil.rmtree(self.media, ignore_errors=True)
+
+    def test_defaults_without_uploads(self):
+        urls = site_photos.urls()
+        self.assertEqual(set(urls), set(site_photos.KEYS))
+        self.assertEqual(urls['about_history'], '/static/media/ourhistory.jpg')
+
+    def test_urls_filtered_by_page(self):
+        self.assertTrue(all(k.startswith('home_') for k in site_photos.urls(site_photos.HOME)))
+
+    def test_ensure_slots_creates_every_place_once(self):
+        site_photos.ensure_slots()
+        site_photos.ensure_slots()
+        self.assertEqual(SitePhoto.objects.count(), len(site_photos.SLOTS))
+
+    def test_uploaded_photo_replaces_default(self):
+        site_photos.ensure_slots()
+        photo = SitePhoto.objects.get(key='home_events')
+        photo.image = upload()
+        photo.save()
+        self.assertEqual(site_photos.urls()['home_events'], photo.image.url)
+
+    def test_large_photo_is_shrunk(self):
+        photo = SitePhoto.objects.create(key='about_hero', page='about', title='t')
+        photo.image = upload((4000, 3000))
+        photo.save()
+        with Image.open(photo.image.path) as im:
+            self.assertEqual(im.size, (site_photos.MAX_SIDE, 1920))
+
+    def test_replacing_photo_deletes_old_file(self):
+        photo = SitePhoto.objects.create(key='about_hero', page='about', title='t')
+        photo.image = upload(name='first.png')
+        photo.save()
+        old_path = photo.image.path
+        photo.image = upload(name='second.png')
+        photo.save()
+        self.assertFalse(os.path.exists(old_path))
+
+    def test_pages_render_with_photos(self):
+        site_photos.ensure_slots()
+        photo = SitePhoto.objects.get(key='about_history')
+        photo.image = upload()
+        photo.save()
+        about = self.client.get('/about').content.decode()
+        self.assertIn(photo.image.url, about)
+        self.assertNotIn('/static/media/ourhistory.jpg"', about.split('id="story"')[1].split('</section>')[0])
+        home = self.client.get('/').content.decode()
+        self.assertIn('/static/media/comunity.webp', home)
+
+    def test_admin_lists_and_uploads(self):
+        from django.contrib.auth.models import User
+        self.client.force_login(User.objects.create_superuser('a', 'a@a.a', 'p'))
+        listing = self.client.get('/admin/app/sitephoto/')
+        self.assertEqual(listing.status_code, 200)
+        self.assertContains(listing, 'О нас — Наша история')
+        self.assertNotContains(listing, '/admin/app/sitephoto/add/')
+        photo = SitePhoto.objects.get(key='home_events')
+        url = f'/admin/app/sitephoto/{photo.pk}/change/'
+        self.assertContains(self.client.get(url), 'Какое фото подойдёт')
+        response = self.client.post(url, {'image': upload()})
+        self.assertEqual(response.status_code, 302)
+        photo.refresh_from_db()
+        self.assertTrue(photo.image)
+        self.client.post(url, {'image-clear': 'on'})
+        photo.refresh_from_db()
+        self.assertFalse(photo.image)
+        self.assertEqual(site_photos.urls()['home_events'], '/static/media/comunity.webp')

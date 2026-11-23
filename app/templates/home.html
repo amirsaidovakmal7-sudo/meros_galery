@@ -804,7 +804,7 @@
       <div class="hero-media" aria-hidden="true">
         <!-- Фото лежит под видео: показывается, пока видео грузится, и остаётся,
              если браузер не даёт запустить autoplay. -->
-        <img class="hero-media-photo" src="/static/media/filosophy.jpg" alt="" style="object-position:50% 55%" />
+        <img class="hero-media-photo" src="{{ photos.home_hero }}" alt="" style="object-position:50% 55%" />
         <video id="heroVideo" class="hero-media-video" autoplay muted loop playsinline preload="auto" tabindex="-1" disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate noremoteplayback">
           <source src="/static/media/hero.mp4" type="video/mp4" />
         </video>
@@ -844,7 +844,7 @@
 
         <div data-reveal style="transition-delay:0.15s" class="about-media">
           <figure data-parallax="0.06">
-            <div class="portrait-frame about-portrait"><img src="/static/media/dinara-crop.jpg" alt=""></div>
+            <div class="portrait-frame about-portrait"><img src="{{ photos.home_about }}" alt=""></div>
           </figure>
         </div>
       </div>
@@ -903,7 +903,7 @@
 
       <a href="/events" class="teaser-banner events-banner" data-reveal>
         <div class="teaser-banner-media">
-          <img src="/static/media/comunity.webp" alt="" loading="lazy">
+          <img src="{{ photos.home_events }}" alt="" loading="lazy">
         </div>
         <span class="teaser-banner-cta">Learn more</span>
       </a>
@@ -969,7 +969,7 @@
       <div class="instagram-strip" data-reveal>
         <a href="#" class="instagram-item">
           <div class="instagram-item-frame">
-            <img src="/static/media/about-hero.jpg" alt="" loading="lazy">
+            <img src="{{ photos.home_instagram_1 }}" alt="" loading="lazy">
             <span class="instagram-badge" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
             </span>
@@ -977,7 +977,7 @@
         </a>
         <a href="#" class="instagram-item">
           <div class="instagram-item-frame">
-            <img src="/static/media/comunity.webp" alt="" loading="lazy">
+            <img src="{{ photos.home_instagram_2 }}" alt="" loading="lazy">
             <span class="instagram-badge" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
             </span>
@@ -985,7 +985,7 @@
         </a>
         <a href="#" class="instagram-item">
           <div class="instagram-item-frame">
-            <img src="/static/media/direction.webp" alt="" loading="lazy">
+            <img src="{{ photos.home_instagram_3 }}" alt="" loading="lazy">
             <span class="instagram-badge" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
             </span>
@@ -993,7 +993,7 @@
         </a>
         <a href="#" class="instagram-item">
           <div class="instagram-item-frame">
-            <img src="/static/media/quote.jpg" alt="" loading="lazy">
+            <img src="{{ photos.home_instagram_4 }}" alt="" loading="lazy">
             <span class="instagram-badge" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
             </span>
@@ -1001,7 +1001,7 @@
         </a>
         <a href="#" class="instagram-item">
           <div class="instagram-item-frame">
-            <img src="/static/media/comunity.jpg" alt="" loading="lazy">
+            <img src="{{ photos.home_instagram_5 }}" alt="" loading="lazy">
             <span class="instagram-badge" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="6"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>
             </span>

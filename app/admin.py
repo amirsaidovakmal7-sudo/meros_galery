@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import *
+from . import site_photos
 from adminsortable2.admin import SortableAdminMixin
 
 
@@ -116,6 +118,58 @@ class WorkersAdmin(SortableAdminMixin, admin.ModelAdmin):
 @admin.register(WorkersImage)
 class WorkersImageAdmin(SortableAdminMixin, admin.ModelAdmin):
     pass
+
+
+@admin.register(SitePhoto)
+class SitePhotoAdmin(admin.ModelAdmin):
+    """Набор мест фиксирован (app/site_photos.py): заказчик только меняет фото."""
+    list_display = ['preview_small', 'title', 'page_name', 'is_custom']
+    list_display_links = ['preview_small', 'title']
+    list_filter = ['page']
+    fields = ['title', 'hint', 'preview', 'image']
+    readonly_fields = ['title', 'hint', 'preview']
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(key__in=site_photos.KEYS)
+
+    def changelist_view(self, request, extra_context=None):
+        site_photos.ensure_slots()
+        return super().changelist_view(request, extra_context)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def _current_url(self, obj):
+        return obj.image.url if obj.image else site_photos.default_url(obj.key)
+
+    @admin.display(description='Фото')
+    def preview_small(self, obj):
+        return format_html(
+            '<img src="{}" style="width:120px;height:68px;object-fit:cover;border-radius:4px;display:block">',
+            self._current_url(obj))
+
+    @admin.display(description='Сейчас на сайте')
+    def preview(self, obj):
+        label = 'Загруженное фото' if obj.image else 'Стандартное фото сайта'
+        return format_html(
+            '<img src="{}" style="max-width:480px;max-height:320px;border-radius:4px;display:block">'
+            '<div style="margin-top:6px;color:#666">{}</div>',
+            self._current_url(obj), label)
+
+    @admin.display(description='Какое фото подойдёт')
+    def hint(self, obj):
+        return site_photos.SLOT_BY_KEY[obj.key][4]
+
+    @admin.display(description='Страница', ordering='page')
+    def page_name(self, obj):
+        return obj.get_page_display()
+
+    @admin.display(description='Своё фото', boolean=True)
+    def is_custom(self, obj):
+        return bool(obj.image)
 
 
 
